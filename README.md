@@ -33,7 +33,7 @@ This project uses **Swiggy’s food ordering subprocess** as an example to desig
 ##  Project Data
 - Synthetic data generated in **CSV format** for different entities.
 - Files uploaded using **Snowflake’s File Upload feature**.
-- Entities considered: `Location`, `Restaurant`, `Customer`, `Customer-adress`, `Menu`, `Delivery_agent`, `Orders`, `Order-items`, `Delivery`.
+- Entities considered: `Location`, `Restaurant`, `Customer`, `Customer-adress`, `Menu`, `Delivery_agent`, `Orders`, `Order-items`, `Delivery`,  `Login-audit` 
 
 ---
 
