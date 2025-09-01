@@ -128,8 +128,7 @@ Understanding entity relationships is crucial in any **data engineering project*
 
 ## ER Diagram
 
-![ERD](https://github.com/user-attachments/assets/9bb136cd-0f95-4093-a3a8-bc2e6c42e7f6)
-
+<img width="1366" height="768" alt="ERD" src="https://github.com/user-attachments/assets/02c9f01e-9456-4947-9283-206f775623bd" />
 
 ---
 
