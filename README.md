@@ -30,7 +30,7 @@ This project uses **Swiggy’s food ordering subprocess** as an example to desig
 
 ---
 
-## 📂 Project Data
+##  Project Data
 - Synthetic data generated in **CSV format** for different entities.
 - Files uploaded using **Snowflake’s File Upload feature**.
 - Entities considered: `Location`, `Restaurant`, `Customer`, `Customer-adress`, `Menu`, `Delivery_agent`, `Orders`, `Order-items`, `Delivery`.
@@ -57,7 +57,7 @@ At a high level, **9–10 entities (tables)** are required to support the busine
 
 ---
 
-## 🛠 Breakdown of Sections
+## Breakdown of Sections
 
 ### 1. Implement E2E Data Flow
 - Create **Database and Schema** in Snowflake.
@@ -92,5 +92,6 @@ At a high level, **9–10 entities (tables)** are required to support the busine
 
 ---
 
+## End-to-End Data Flow Diagram
 
-
+<img width="1961" height="980" alt="Food-Aggregator-E2E-Data-Flow" src="https://github.com/user-attachments/assets/dfe69eb7-7db6-48ef-b251-26878f07b6e7" />
