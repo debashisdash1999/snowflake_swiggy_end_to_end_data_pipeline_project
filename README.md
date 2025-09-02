@@ -1,4 +1,3 @@
-# snowflake_end_to_end_data_pipeline_project
 # Swiggy End-to-End Data Engineering Project
 
 ## Why Swiggy?
