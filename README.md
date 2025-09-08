@@ -132,7 +132,7 @@ Understanding entity relationships is crucial in any **data engineering project*
 
 ---
 
- These relationships form the backbone for building **fact and dimension tables** in the data warehouse.
+These relationships form the backbone for building **fact and dimension tables** in the data warehouse.
 
 ## Source System CSV File Analysis
 
@@ -188,6 +188,7 @@ The main goal of this process is to transform raw source data into a structured 
   - Transactional data like `Order` and `Order_Items` becomes the **fact table**.
 - The **clean schema** represents OLTP-style data, while the **consumption schema** provides star-schema structured data for reporting and analysis.
 
+<img width="1209" height="768" alt="Objective ERD" src="https://github.com/user-attachments/assets/f44b1fdd-c479-447a-885a-a8c8ba0fcd4a" />
 
 
 ---
