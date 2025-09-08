@@ -132,3 +132,92 @@ Understanding entity relationships is crucial in any **data engineering project*
 ---
 
  These relationships form the backbone for building **fact and dimension tables** in the data warehouse.
+
+## Source System CSV File Analysis
+
+### Data Sources
+The source data for this project includes the following CSV files representing different entities:
+
+- `Location`
+- `Restaurant`
+- `Customer`
+- `Customer_Address`
+- `Menu`
+- `Delivery_Agent`
+- `Orders`
+- `Order_Items`
+- `Delivery`
+- `Login_Audit`
+
+### Initial Load & Delta Load
+In this project, I’ll demonstrate how to:
+1. Handle **initial loads** – when we get the first set of data.
+2. Process **delta loads** – subsequent changes or additions, which is a common pattern in batch processing systems.
+
+For each source, I’ll begin with a handful of records representing both initial and delta loads to build the entire pipeline. Once the solution is validated with sample data, I’ll scale it to thousands of records. This approach mirrors real-world practices where the business team provides sample data to build the pipeline, followed by validation with larger datasets.
+
+---
+
+##  Understanding Overall End-to-End Data Architecture
+
+### Stage Layer
+- CSV files from different entities are uploaded to Snowflake using the **file loader** feature.
+- These files are stored in a **stage location**.
+- A **COPY command** is used to load data from the stage into Snowflake tables.
+
+### Clean Layer
+- After loading, the data is moved into the **clean layer**, a schema where:
+  - Basic data cleansing
+  - Data validation
+  - Initial transformations are performed.
+
+### Consumption Layer
+- From the clean layer, data is moved to the **consumption layer**, where:
+  - Fact and dimension tables are built.
+  - The process starts from the `Location` entity and progresses to the `Order_Items` fact table.
+
+---
+
+###  Objective of the Architecture
+The main goal of this process is to transform raw source data into a structured data platform that supports analytical queries.
+
+- Source data is ingested and goes through a set of transformations.
+- The final data model follows a **star schema dimensional modeling** approach:
+  - Master data like `Customer`, `Customer_Address`, `Restaurant`, `Menu`, `Location`, `Delivery_Agent` becomes **dimension tables**.
+  - Transactional data like `Order` and `Order_Items` becomes the **fact table**.
+- The **clean schema** represents OLTP-style data, while the **consumption schema** provides star-schema structured data for reporting and analysis.
+
+
+
+---
+
+##  Points to Remember
+
+- **Dimensional Modeling / Star Schema**
+  - Often referred to as the **star schema** in data warehousing.
+  - It adheres to principles like **Second Normal Form (2NF)** in database design.
+  - Consists of:
+    - A central **fact table** (transactional data)
+    - Surrounded by multiple **dimension tables** (master data).
+  - Fact tables store measurable business events, while dimension tables store descriptive attributes.
+
+---
+
+###  Notes on Normal Forms (For deeper understanding)
+
+- **First Normal Form (1NF)**  
+  - Ensures that each column contains atomic values and each row is unique.
+  - Eliminates repeating groups.
+
+- **Second Normal Form (2NF)**  
+  - Builds on 1NF by ensuring that every non-key attribute is fully functionally dependent on the primary key.
+  - Avoids partial dependencies.
+
+- **Third Normal Form (3NF)**  
+  - Builds on 2NF by removing transitive dependencies.
+  - Ensures that non-key attributes depend only on the primary key.
+
+These normal forms help structure data efficiently, reduce redundancy, and improve data integrity. In dimensional modeling, 2NF is commonly used while balancing performance and simplicity.
+
+---
+
