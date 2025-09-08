@@ -97,7 +97,7 @@ At a high level, **9–10 entities (tables)** are required to support the busine
 
 ---
 
-## 🗂 ER Diagram Analysis
+## ER Diagram Analysis
 
 Understanding entity relationships is crucial in any **data engineering project** because they guide how we design **data warehouse tables across different layers**.
 
