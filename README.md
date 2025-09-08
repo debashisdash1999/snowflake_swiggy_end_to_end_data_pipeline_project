@@ -207,19 +207,63 @@ The main goal of this process is to transform raw source data into a structured 
 
 ###  Notes on Normal Forms (For deeper understanding)
 
-- **First Normal Form (1NF)**  
-  - Ensures that each column contains atomic values and each row is unique.
-  - Eliminates repeating groups.
+#### First Normal Form (1NF)
+- Each column must contain **atomic (indivisible) values**.
+- There should be **no repeating groups** or arrays within a column.
+- Every row must be **unique** and identifiable by a primary key.
 
-- **Second Normal Form (2NF)**  
-  - Builds on 1NF by ensuring that every non-key attribute is fully functionally dependent on the primary key.
-  - Avoids partial dependencies.
+**Example:**  
+In the `Customer_Address` table, storing multiple addresses in a single column like this would **violate 1NF**:
 
-- **Third Normal Form (3NF)**  
-  - Builds on 2NF by removing transitive dependencies.
-  - Ensures that non-key attributes depend only on the primary key.
+| Customer_ID | Address |
+|-------------|-----------------------------|
+| 1           | "Address1, Address2"       |
 
-These normal forms help structure data efficiently, reduce redundancy, and improve data integrity. In dimensional modeling, 2NF is commonly used while balancing performance and simplicity.
+Instead, it should be split into separate rows:
+
+| Customer_ID | Address      |
+|-------------|--------------|
+| 1           | Address1     |
+| 1           | Address2     |
+
+---
+
+#### Second Normal Form (2NF)
+- Builds on 1NF.
+- Ensures that **every non-key column is fully dependent on the entire primary key**, not just part of it.
+- Avoids **partial dependencies** where a column depends only on a part of a composite key.
+
+**Example:**  
+In the `Order_Items` table, assume the primary key is `(Order_ID, Menu_ID)`.  
+If you also store `Restaurant_Name`, which depends only on `Menu_ID`, that’s a violation of 2NF because it’s dependent on only part of the key.
+
+Correct approach: Move `Restaurant_Name` to the `Menu` or `Restaurant` dimension table, where it fully depends on `Menu_ID`.
+
+---
+
+#### Third Normal Form (3NF)
+- Builds on 2NF.
+- Removes **transitive dependencies**, where non-key columns depend indirectly on the primary key through another column.
+- Ensures that **non-key attributes depend only on the primary key**.
+
+**Example:**  
+If the `Customer` table has columns like:
+
+| Customer_ID | Address_ID | City_Name  |
+|-------------|------------|------------|
+| 1           | 101        | New York   |
+
+Here, `City_Name` depends on `Address_ID`, which depends on `Customer_ID`. This is a transitive dependency.
+
+Correct approach:
+- Move `City_Name` to an `Address` or `Location` table where it depends directly on `Address_ID`.
+
+---
+
+### Why It Matters
+- Normalization helps to **reduce redundancy**, **improve data integrity**, and **streamline updates**.
+- In data warehouses, we balance normalization with performance and usability - often using **star schemas** where dimension tables are slightly denormalized for query efficiency.
+
 
 ---
 
