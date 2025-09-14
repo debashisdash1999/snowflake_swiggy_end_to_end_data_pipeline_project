@@ -264,6 +264,34 @@ Correct approach:
 - Normalization helps to **reduce redundancy**, **improve data integrity**, and **streamline updates**.
 - In data warehouses, we balance normalization with performance and usability - often using **star schemas** where dimension tables are slightly denormalized for query efficiency.
 
+---
+## Setting up the Snowflake Sandbox Environment
+
+In this step, we create a **database sandbox** and all necessary **schemas, file formats, internal stages, tags, and masking policies** to support the end-to-end data pipeline.
 
 ---
 
+### 1️⃣ Switch to SYSADMIN Role (SYSADMIN role is used because it has privileges to create warehouses, databases, schemas, and other objects.)
+```sql
+use role sysadmin;
+
+```
+### 2️⃣ Create Warehouse
+```sql
+create warehouse if not exists adhoc_wh
+     comment = 'This is the adhoc-wh'
+     warehouse_size = 'x-small' 
+     auto_resume = true 
+     auto_suspend = 60 
+     enable_query_acceleration = false 
+     warehouse_type = 'standard' 
+     min_cluster_count = 1 
+     max_cluster_count = 1 
+     scaling_policy = 'standard'
+     initially_suspended = true;
+```
+Warehouse: Compute layer in Snowflake. Needed to execute queries and run ETL processes.
+
+auto_resume / auto_suspend ensures cost optimization.
+
+x-small is sufficient for development/sandbox use.
