@@ -431,13 +431,21 @@ This structure helps in:
 
 ###  Example Stage Structure
 @stage_sch.csv_stg/
+
 ├── initial/
+
 │ ├── Location.csv
+
 │ ├── Customer.csv
+
 │ └── ...
+
 └── delta/
+
 ├── Location.csv
+
 ├── Customer.csv
+
 └── ...
 
 ###  Notes
