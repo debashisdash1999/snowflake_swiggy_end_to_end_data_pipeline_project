@@ -403,3 +403,4 @@ create or replace masking policy
 
 <img width="1184" height="615" alt="image" src="https://github.com/user-attachments/assets/c3b185d6-b078-40f4-864b-79215687bad7" />
 
+### After setting up the warehouse, schemas, file format, stage, tags, and masking policies, the next step is to **upload the CSV files** into the stage location.
