@@ -401,3 +401,5 @@ create or replace masking policy
 - **Tags** → Used to classify sensitive columns for governance and compliance.
 - **Masking Policies** → Protect sensitive data by masking it for non-authorized users during queries.
 
+<img width="1184" height="615" alt="image" src="https://github.com/user-attachments/assets/c3b185d6-b078-40f4-864b-79215687bad7" />
+
