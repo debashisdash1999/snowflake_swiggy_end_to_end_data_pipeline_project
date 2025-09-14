@@ -274,7 +274,6 @@ In this step, we create a **database sandbox** and all necessary **schemas, file
 ### 1️⃣ Switch to SYSADMIN Role (SYSADMIN role is used because it has privileges to create warehouses, databases, schemas, and other objects.)
 ```sql
 use role sysadmin;
-
 ```
 ### 2️⃣ Create Warehouse
 ```sql
@@ -295,3 +294,110 @@ Warehouse: Compute layer in Snowflake. Needed to execute queries and run ETL pro
 auto_resume / auto_suspend ensures cost optimization.
 
 x-small is sufficient for development/sandbox use.
+
+### 3️⃣ Create Sandbox Database and Schemas
+```sql
+create database if not exists sandbox;
+use database sandbox;
+
+create schema if not exists stage_sch;
+create schema if not exists clean_sch;
+create schema if not exists consumption_sch;
+create schema if not exists common;
+```
+Database: Logical container for all project objects.
+
+Schemas: Organize objects by purpose:
+
+`stage_sch` → raw data staging.
+
+`clean_sch` → cleaned and processed data.
+
+`consumption_sch` → fact and dimension tables for analytics.
+
+`common` → shared objects like tags, masking policies, reusable functions.
+
+### 4️⃣ Create File Format for CSV
+```sql
+create file format if not exists stage_sch.csv_file_format 
+        type = 'csv' 
+        compression = 'auto' 
+        field_delimiter = ',' 
+        record_delimiter = '\n' 
+        skip_header = 1 
+        field_optionally_enclosed_by = '\042' 
+        null_if = ('\\N');
+```
+File format defines how Snowflake reads files in stages.
+
+Important options:
+
+`skip_header = 1` → ignores header row.
+
+`field_optionally_enclosed_by = '\042'` → handles quotes around fields.
+
+`null_if = ('\\N')` → interprets \N as NULL.
+
+### 5️⃣ Create Internal Stage
+```sql
+create stage stage_sch.csv_stg
+    directory = ( enable = true )
+    comment = 'this is the snowflake internal stage';
+```
+Stage: Storage location in Snowflake for your CSV files.
+
+Can be used with COPY INTO commands to load data into tables.
+
+directory = true allows organizing files in subfolders.
+
+### 6️⃣ Create Tag Objects
+```sql
+create or replace tag 
+    common.pii_policy_tag 
+    allowed_values = ('PII','PRICE','SENSITIVE','EMAIL')
+    comment = 'This is PII policy tag object';
+```
+Tag: Metadata label that can be attached to tables or columns.
+
+Used for data governance, classification, and compliance.
+
+Example: Mark sensitive columns like `email` or `phone` as `PII`.
+
+### 7️⃣ Create Masking Policies
+```sql
+create or replace masking policy 
+    common.pii_masking_policy as (pii_text string)
+    returns string -> to_varchar('** PII **');
+
+create or replace masking policy 
+    common.email_masking_policy as (email_text string)
+    returns string -> to_varchar('** EMAIL **');
+
+create or replace masking policy 
+    common.phone_masking_policy as (phone string)
+    returns string -> to_varchar('** Phone **');
+```
+**Masking Policy** controls how sensitive data is displayed.
+
+- It is **applied to columns** to hide actual values for non-privileged users.
+- Helps ensure that sensitive information is not exposed in queries.
+
+###  Examples
+- `email_masking_policy` → hides customer email addresses.
+- `phone_masking_policy` → hides customer phone numbers.
+
+###  Purpose
+- Ensures **data privacy** and compliance with regulations like **GDPR**.
+- Works alongside **tags** to help classify and govern sensitive data.
+
+---
+
+## ✅ Summary of Setup
+
+- **Warehouse** → Provides compute resources for running queries and ETL processes.
+- **Database + Schemas** → Organizes raw, cleaned, and analytical data into logical containers.
+- **File Format** → Defines how CSV files are parsed and interpreted by Snowflake.
+- **Internal Stage** → Serves as temporary storage for CSV files before loading them into tables.
+- **Tags** → Used to classify sensitive columns for governance and compliance.
+- **Masking Policies** → Protect sensitive data by masking it for non-authorized users during queries.
+
