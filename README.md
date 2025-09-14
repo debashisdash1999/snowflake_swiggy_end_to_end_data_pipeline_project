@@ -403,4 +403,46 @@ create or replace masking policy
 
 <img width="1184" height="615" alt="image" src="https://github.com/user-attachments/assets/c3b185d6-b078-40f4-864b-79215687bad7" />
 
-### After setting up the warehouse, schemas, file format, stage, tags, and masking policies, the next step is to **upload the CSV files** into the stage location.
+##  Uploading Files with Partitions: Initial Load & Delta Load
+
+After uploading the files into the stage location using Snowflake’s file upload feature, I will organize the files based on the type of data load.
+
+###  Types of Data Files
+1. **Initial Load Files**
+   - Contains the first set of data for each entity.
+   - Represents a full snapshot of data at the start.
+
+2. **Delta Load Files**
+   - Contains incremental changes or new records after the initial load.
+   - Represents updates, inserts, or modifications over time.
+
+---
+
+###  Partitioning in Stage Location
+To distinguish between initial and delta loads, I will create **two partitions** inside the internal stage:
+
+- `initial/` → For storing initial load files.
+- `delta/` → For storing incremental or delta files.
+
+This structure helps in:
+- Easily managing and identifying the type of data.
+- Running separate `COPY INTO` commands as per load type.
+- Simulating real-world batch processing pipelines where data comes in chunks.
+
+###  Example Stage Structure
+@stage_sch.csv_stg/
+├── initial/
+│ ├── Location.csv
+│ ├── Customer.csv
+│ └── ...
+└── delta/
+├── Location.csv
+├── Customer.csv
+└── ...
+
+###  Notes
+- Using partitions mimics how files are organized in cloud storage like AWS S3 or Azure Blob Storage.
+- It provides a scalable and structured way to manage multiple data versions.
+- This setup allows the pipeline to process full and incremental datasets independently while maintaining a clean workflow.
+
+
