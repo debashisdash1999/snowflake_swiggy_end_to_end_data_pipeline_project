@@ -64,3 +64,18 @@ create or replace masking policy
     common.phone_masking_policy as (phone string)
     returns string -> 
     to_varchar('** Phone **');
+
+-- After loading the data in initial and delta of the stage, time to verify those
+list @stage_sch.csv_stg;
+
+-- SQL command to check the data in stage location
+select
+      t.$1 :: text as locationid,
+      t.$2 :: text as city,
+      t.$3 :: text as state,
+      t.$4 :: text as zipcode,
+      t.$5 :: text as activeflag,
+      t.$6 :: text as createddate,
+      t.$7 :: text as modifieddate
+from @stage_sch.csv_stg/initial/location
+(file_format => 'stage_sch.csv_file_format') t;
