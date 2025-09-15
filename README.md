@@ -454,3 +454,5 @@ This structure helps in:
 - This setup allows the pipeline to process full and incremental datasets independently while maintaining a clean workflow.
 
 
+### Reference Images of data loading into snowflake stage
+## <img width="1350" height="657" alt="image" src="https://github.com/user-attachments/assets/34096b23-f4ea-43a0-9324-8fab35763925" />
