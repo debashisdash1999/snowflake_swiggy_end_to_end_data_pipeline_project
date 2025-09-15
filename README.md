@@ -486,3 +486,71 @@ After clicking the "+ Files"
 
 ## Delta Loads for all the entities:
 <img width="1351" height="661" alt="image" src="https://github.com/user-attachments/assets/81c38f73-9295-42ca-bfd1-2d4bc2ec4d59" />
+
+##  Loading Data from Stage into Tables
+
+After uploading all the files into the `initial/` and `delta/` folders under `CSV_STG`, I will proceed with loading them into the respective tables using the `COPY INTO` command.
+
+###  File Reference Pattern
+The files in the stage will be referenced using the following pattern:
+
+`@stage_sch.csv_stg/{initial|delta}/{entity_name}/{file_name}.csv`
+
+For example:
+
+- Initial load for Location:  
+  `@stage_sch.csv_stg/initial/location/Location.csv`
+
+- Delta load for Orders:  
+  `@stage_sch.csv_stg/delta/orders/Orders.csv`
+
+This structure helps keep the data organized and easy to manage during ingestion.
+
+
+### Verifying Files in Stage
+
+After loading the files into the stage, I will verify them by running the following command:
+
+```sql
+list @stage_sch.csv_stg;
+```
+## Verifying if the files are successfully uploaded in the stage location:
+<img width="1348" height="621" alt="image" src="https://github.com/user-attachments/assets/23f867be-4392-4428-a81e-18612685a470" />
+
+## Creating Tables and Loading Data
+
+Next, I will:
+
+Create tables for each entity:
+
+- `Location`
+
+- `Restaurant`
+
+- `Customer`
+
+- `Customer_Address`
+
+- `Menu`
+
+- `Delivery_Agent`
+
+- `Orders`
+
+- `Order_Items`
+
+- `Delivery`
+
+- `Login_Audit`
+
+Run COPY INTO commands to load data from the stage into these tables.
+
+Use Stream objects to capture changes (inserts and updates) while loading data, enabling delta processing and tracking modifications efficiently.
+
+## Notes
+
+- Referencing files by type (initial or delta) helps simulate real-world data workflows.
+
+- Verifying files ensures smooth data ingestion.
+
+- Using streams is critical for handling incremental data changes and supporting robust data pipelines.
