@@ -511,12 +511,27 @@ This structure helps keep the data organized and easy to manage during ingestion
 
 ### Verifying Files in Stage
 
-After loading the files into the stage, I will verify them by running the following command:
+- After loading the files into the stage, I will verify them by running the following command:
 
 ```sql
 list @stage_sch.csv_stg;
 ```
-## Verifying if the files are successfully uploaded in the stage location:
+- SQL command to check the data in stage location
+
+```sql
+select
+      t.$1 :: text as locationid,
+      t.$2 :: text as city,
+      t.$3 :: text as state,
+      t.$4 :: text as zipcode,
+      t.$5 :: text as activeflag,
+      t.$6 :: text as createddate,
+      t.$7 :: text as modifieddate
+from @stage_sch.csv_stg/initial/location
+(file_format => 'stage_sch.csv_file_format') t;
+```
+
+## Verifying if the files are successfully uploaded in the stage location (image):
 <img width="1348" height="621" alt="image" src="https://github.com/user-attachments/assets/23f867be-4392-4428-a81e-18612685a470" />
 
 ## Creating Tables and Loading Data
