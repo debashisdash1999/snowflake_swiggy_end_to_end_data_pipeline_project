@@ -487,6 +487,8 @@ After clicking the "+ Files"
 ## Delta Loads for all the entities:
 <img width="1351" height="661" alt="image" src="https://github.com/user-attachments/assets/81c38f73-9295-42ca-bfd1-2d4bc2ec4d59" />
 
+---
+
 ##  Loading Data from Stage into Tables
 
 After uploading all the files into the `initial/` and `delta/` folders under `CSV_STG`, I will proceed with loading them into the respective tables using the `COPY INTO` command.
