@@ -480,3 +480,9 @@ After clicking the "+ Files"
 - Same steps for Delta loads, into the "Delta" path
 
 ## Follow the same uploading steps for Initial and Delta loads of each entities.
+
+## Initial Loads for all the entities:
+<img width="1346" height="628" alt="image" src="https://github.com/user-attachments/assets/960ee676-8432-4517-83ef-9444276b3c40" />
+
+## Delta Loads for all the entities:
+<img width="1351" height="661" alt="image" src="https://github.com/user-attachments/assets/81c38f73-9295-42ca-bfd1-2d4bc2ec4d59" />
