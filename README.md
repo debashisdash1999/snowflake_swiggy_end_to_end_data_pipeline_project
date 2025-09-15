@@ -553,6 +553,9 @@ Use Stream objects to capture changes (inserts and updates) while loading data, 
 
 - Referencing files by type (initial or delta) helps simulate real-world data workflows.
 
+- Stage location files are case sensitive, so keep an eye while mentioning the stage location file names.
+
 - Verifying files ensures smooth data ingestion.
 
 - Using streams is critical for handling incremental data changes and supporting robust data pipelines.
+
