@@ -511,7 +511,7 @@ This structure helps keep the data organized and easy to manage during ingestion
 
 ### Verifying Files in Stage
 
-After loading the files into the stage, I will verify them by running the following command:
+After loading the files into the stage (`csv_stg`), I will verify them by running the following command:
 
 ```sql
 list @stage_sch.csv_stg;
