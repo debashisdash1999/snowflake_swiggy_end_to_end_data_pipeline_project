@@ -456,3 +456,6 @@ This structure helps in:
 
 ### Reference Images of data loading into snowflake stage
 ## 1 <img width="1350" height="657" alt="image" src="https://github.com/user-attachments/assets/34096b23-f4ea-43a0-9324-8fab35763925" />
+After clicking the "+ Files"
+
+## 2
