@@ -458,4 +458,5 @@ This structure helps in:
 ## 1 <img width="1350" height="657" alt="image" src="https://github.com/user-attachments/assets/34096b23-f4ea-43a0-9324-8fab35763925" />
 After clicking the "+ Files"
 
-## 2
+## 2 <img width="1144" height="666" alt="image" src="https://github.com/user-attachments/assets/9fa57606-4c96-406a-8dc3-76da68a99c6f" />
+
