@@ -459,6 +459,6 @@ This structure helps in:
 After clicking the "+ Files"
 
 ## 2 <img width="1144" height="666" alt="image" src="https://github.com/user-attachments/assets/9fa57606-4c96-406a-8dc3-76da68a99c6f" />
-Check "Select database, schema abd stage"
+Check "Select database, schema abd stage" -> Goto "Browse" and upload the files
 
 
