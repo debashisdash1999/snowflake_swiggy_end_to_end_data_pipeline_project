@@ -270,11 +270,11 @@ Correct approach:
 In this step, we create a **database sandbox** and all necessary **schemas, file formats, internal stages, tags, and masking policies** to support the end-to-end data pipeline.
 
 
-### 1️⃣ Switch to SYSADMIN Role (SYSADMIN role is used because it has privileges to create warehouses, databases, schemas, and other objects.)
+### 1 Switch to SYSADMIN Role (SYSADMIN role is used because it has privileges to create warehouses, databases, schemas, and other objects.)
 ```sql
 use role sysadmin;
 ```
-### 2️⃣ Create Warehouse
+### 2 Create Warehouse
 ```sql
 create warehouse if not exists adhoc_wh
      comment = 'This is the adhoc-wh'
@@ -294,7 +294,7 @@ auto_resume / auto_suspend ensures cost optimization.
 
 x-small is sufficient for development/sandbox use.
 
-### 3️⃣ Create Sandbox Database and Schemas
+### 3 Create Sandbox Database and Schemas
 ```sql
 create database if not exists sandbox;
 use database sandbox;
@@ -316,7 +316,7 @@ Schemas: Organize objects by purpose:
 
 `common` → shared objects like tags, masking policies, reusable functions.
 
-### 4️⃣ Create File Format for CSV
+### 4 Create File Format for CSV
 ```sql
 create file format if not exists stage_sch.csv_file_format 
         type = 'csv' 
@@ -337,7 +337,7 @@ Important options:
 
 `null_if = ('\\N')` → interprets \N as NULL.
 
-### 5️⃣ Create Internal Stage
+### 5 Create Internal Stage
 ```sql
 create stage stage_sch.csv_stg
     directory = ( enable = true )
@@ -349,7 +349,7 @@ Can be used with COPY INTO commands to load data into tables.
 
 directory = true allows organizing files in subfolders.
 
-### 6️⃣ Create Tag Objects
+### 6 Create Tag Objects
 ```sql
 create or replace tag 
     common.pii_policy_tag 
@@ -362,7 +362,7 @@ Used for data governance, classification, and compliance.
 
 Example: Mark sensitive columns like `email` or `phone` as `PII`.
 
-### 7️⃣ Create Masking Policies
+### 7 Create Masking Policies
 ```sql
 create or replace masking policy 
     common.pii_masking_policy as (pii_text string)
@@ -391,7 +391,7 @@ create or replace masking policy
 
 ---
 
-## ✅ Summary of Setup
+##  Summary of Setup
 
 - **Warehouse** → Provides compute resources for running queries and ETL processes.
 - **Database + Schemas** → Organizes raw, cleaned, and analytical data into logical containers.
@@ -454,26 +454,26 @@ This structure helps in:
 
 
 ### Reference Images of data loading into snowflake stage
-## 1 
+- 1 
 <img width="1350" height="657" alt="image" src="https://github.com/user-attachments/assets/34096b23-f4ea-43a0-9324-8fab35763925" />
 After clicking the "+ Files"
 
-## 2 
+- 2 
 <img width="1144" height="666" alt="image" src="https://github.com/user-attachments/assets/9fa57606-4c96-406a-8dc3-76da68a99c6f" />
 - Check "Select database, schema abd stage"  
 - Goto "Browse" and upload the files"
 
-## 3 
+- 3 
 <img width="666" height="549" alt="image" src="https://github.com/user-attachments/assets/73a3a538-c960-4651-b989-639b5fb3736f" />
 
 - Specify the path "initial", where the initial load files will be loaded.
 
-## 4 
+- 4 
 <img width="701" height="615" alt="image" src="https://github.com/user-attachments/assets/64eee676-46ce-4df6-9915-c2da71cee84b" />
 
 - Click "Upload" in the right side lower corner
 
-## 5 
+- 5 
 <img width="691" height="655" alt="image" src="https://github.com/user-attachments/assets/abcfa81d-c5b6-4bc4-ac41-3a4bf53e3d36" />
 
 - Same steps for Delta loads, into the "Delta" path
