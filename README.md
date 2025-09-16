@@ -269,7 +269,6 @@ Correct approach:
 
 In this step, we create a **database sandbox** and all necessary **schemas, file formats, internal stages, tags, and masking policies** to support the end-to-end data pipeline.
 
----
 
 ### 1️⃣ Switch to SYSADMIN Role (SYSADMIN role is used because it has privileges to create warehouses, databases, schemas, and other objects.)
 ```sql
