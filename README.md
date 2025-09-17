@@ -685,3 +685,159 @@ md5(location_name || city || state) as location_hash_key
 - A **stream object** helps capture data changes during loading.
 - The `location_dim_table` is created with a **hash key** that ensures uniqueness, tracks changes, and supports efficient querying.
 - This approach provides a robust way to manage data consistency and integrity while building analytical models.
+
+## 📥 Moving Forward – Using the Clean Schema
+
+So far, I have used the **stage schema** to perform tasks such as loading data, tracking changes using streams, and adding audit columns.
+
+Now, I will switch to the **clean schema** and create the location table named `restaurant_location`.
+
+---
+
+### ✅ Why Use the Clean Schema
+
+- The clean schema is designed to hold data that has been **validated, cleansed, and transformed**.
+- It ensures that data types are appropriate and consistent before moving to the final analytical models.
+- This layer helps in preparing data for downstream processes while maintaining data quality.
+
+---
+
+### ✅ Creating `restaurant_location` Table
+
+- In the clean schema, the `restaurant_location` table will be created to store location-related information.
+- It will be based on the data from the stage schema’s `Location` table, enriched with audit information and transformation logic.
+- The table will also incorporate the **hash key** for identifying unique records and tracking changes effectively.
+
+This step helps transition from raw data to structured and reliable datasets ready for analytical use.
+
+```sql
+create or replace table clean_sch.restaurant_location (
+    restaurant_location_sk number autoincrement primary key,
+    location_id number not null unique,
+    city string(100) not null,
+    state string(100) not null,
+    state_code string(2) not null,
+    is_union_territory boolean not null default false,
+    capital_city_flag boolean not null default false,
+    city_tier text(6),
+    zip_code string(10) not null,
+    active_flag string(10) not null,
+    created_ts timestamp_tz not null,
+    modified_ts timestamp_tz,
+    
+    -- additional audit columns
+    _stg_file_name string,
+    _stg_file_load_ts timestamp_ntz,
+    _stg_file_md5 string,
+    _copy_data_ts timestamp_ntz default current_timestamp
+)
+comment = 'Location entity under clean schema with appropriate data type under clean schema layer, data is populated using merge statement from the stage layer location table. This table does not support SCD2';
+```
+While creating the `restaurant_location` table in the **clean schema**, I added some additional columns to enrich the location data and ensure better tracking and usability.
+
+---
+
+### ✅ Additional Columns in `restaurant_location`
+```sql
+ is_union_territory boolean not null default false,
+    capital_city_flag boolean not null default false,
+    city_tier text(6),
+    zip_code string(10) not null,
+    active_flag string(10) not null,
+    created_ts timestamp_tz not null,
+    modified_ts timestamp_tz,
+    
+    -- additional audit columns
+    _stg_file_name string,
+    _stg_file_load_ts timestamp_ntz,
+    _stg_file_md5 string,
+    _copy_data_ts timestamp_ntz default current_timestamp
+```
+### ➤ Explanation
+
+- **`is_union_territory`** → Indicates whether the location is a union territory.
+- **`capital_city_flag`** → Indicates whether the location is a capital city.
+- **`city_tier`** → Represents the classification or ranking of the city.
+- **`zip_code`** → Postal code for the location.
+- **`active_flag`** → Status to indicate if the location is active or not.
+- **`created_ts` / `modified_ts`** → Track when the record was created and last updated.
+
+These columns help in providing additional context and classification for location data.
+
+---
+
+## ✅ Surrogate Key and Uniqueness
+
+- Every clean table will have a **surrogate key**, which is an auto-incremented ID acting as the primary key.
+- The surrogate key uniquely identifies each record and ensures referential integrity.
+- The **location ID** must be unique in this table to prevent duplicates and maintain data consistency.
+
+---
+
+## ✅ Stream Object for Clean Schema’s Location Table
+
+- A **stream object** will be created on the `restaurant_location` table in the clean schema.
+- This stream will capture any changes and facilitate incremental updates in downstream processes.
+
+---
+
+## ✅ Merge Operation for Data Enrichment
+
+- A **MERGE operation** will be used to load data from the stream object of the stage schema (`stage_sch.location_stm`) into the `restaurant_location` table.
+- The merge operation ensures that new records are inserted, and existing ones are updated appropriately.
+- During this process, additional data enrichment is performed using `CASE` statements.
+
+
+Example of State Code Enrichment:
+```sql
+CASE
+    WHEN State = 'Delhi' THEN 'DL'
+    WHEN State = 'New Delhi' THEN 'DL'
+    WHEN State = 'Maharashtra' THEN 'MH'
+    WHEN State = 'Uttar Pradesh' THEN 'UP'
+    WHEN State = 'Gujarat' THEN 'GJ'
+    -- Add more cases as needed
+END AS state_code
+```
+- This logic adds a new column called `state_code`, which standardizes state names into abbreviated codes for easier reference and reporting.
+
+## ✅ Summary
+
+- The `restaurant_location` table is enriched with additional columns for classification, tracking, and context.
+- A surrogate key ensures uniqueness and integrity.
+- A stream object captures changes in real time.
+- A merge operation loads and enriches data efficiently using transformations like `CASE` statements for state codes.
+- These steps ensure that the location data is reliable, consistent, and ready for analytical use.
+
+ **`is_union_territory`**  
+   - Any state that matches India’s union territory names will be flagged as `TRUE`; otherwise `FALSE`.
+
+ **`capital_city_flag`**  
+   - Indicates whether the location is a capital city based on specific state-city combinations.  
+   - Example `CASE` statement logic:
+
+```sql
+CASE
+    WHEN (State = 'Delhi' AND City = 'New Delhi') THEN TRUE
+    WHEN (State = 'Maharashtra' AND City = 'Mumbai') THEN TRUE
+    WHEN (State = 'Madhya Pradesh' AND City = 'Bhopal') THEN TRUE
+    WHEN (State = 'Karnataka' AND City = 'Bangalore') THEN TRUE
+    -- Add more state-city combinations as needed
+END AS capital_city_flag
+```
+## ✅ Merge Operation Logic
+
+The merge operation ensures **incremental updates and inserts**:
+
+- **Update:** If `Location_ID` in the clean schema matches the `Location_ID` in the source (stage) table and any changes are detected, the existing record will be updated.  
+- **Insert:** If a new `Location_ID` appears in the source, a new record will be inserted into the clean table.
+
+This approach ensures that the clean schema always reflects the latest state of the source data while maintaining historical consistency.
+
+---
+
+## ✅ Summary
+
+- Additional columns like `is_union_territory` and `capital_city_flag` add more context to the location data.  
+- The merge operation efficiently handles both updates and inserts based on the source stream.  
+- This ensures the `restaurant_location` table in the clean schema is always accurate, enriched, and ready for downstream analytical use.
