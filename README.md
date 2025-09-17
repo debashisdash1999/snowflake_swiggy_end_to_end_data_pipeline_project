@@ -574,3 +574,55 @@ Use Stream objects to capture changes (inserts and updates) while loading data, 
 - Using streams is critical for handling incremental data changes and supporting robust data pipelines.
 
 
+## 📥 Data Loading and Processing – Location Entity
+
+After creating tables for each entity, the next step is to **load and process the data**.
+
+### ✅ Loading Data into `Location` Table with Audit Columns
+
+While loading data from the stage into the `Location` table, it’s important to add **audit columns**. These columns help track where the data came from, when it was modified, and other details that are essential for data quality, troubleshooting, and governance.
+
+---
+
+### ✅ Audit Columns in the Location Table
+
+When loading data, the following audit columns will be added:
+
+```sql
+metadata$filename as _stg_file_name,
+metadata$file_last_modified as _stg_file_load_ts,
+metadata$file_content_key as _stg_file_md5,
+current_timestamp as _copy_data_ts
+---
+```
+## ✅ Explanation of Each Audit Column
+
+### `_stg_file_name (metadata$filename)`
+- Captures the name of the file from which this record is loaded.
+- ✅ Helps trace the source of the data and identify the batch file used during the load.
+
+### `_stg_file_load_ts (metadata$file_last_modified)`
+- Captures the timestamp when the file was last modified before loading.
+- ✅ Useful to know the freshness of the data and whether it’s the latest version.
+
+### `_stg_file_md5 (metadata$file_content_key)`
+- Captures the MD5 checksum value of the file content.
+- ✅ Helps verify the integrity of the file and ensure that data wasn’t tampered with during transfer.
+
+### `_copy_data_ts (current_timestamp)`
+- Captures the timestamp when the data was loaded into the table.
+- ✅ Helps track when the data entered the system and supports troubleshooting and audits.
+
+### ✅ Why Audit Columns Matter
+
+- They provide **data lineage**, showing where the data came from and how it was processed.
+- They ensure **data integrity** by tracking file versions and checksums.
+- They help in **monitoring and troubleshooting** by logging load times and file changes.
+- They support **compliance and governance** by maintaining detailed load histories.
+
+<img width="1347" height="596" alt="image" src="https://github.com/user-attachments/assets/405358d1-21ac-4ce5-a69b-2bf0a1846091" />
+
+---
+
+This approach ensures that every record in the `Location` table is not just raw data but enriched with metadata that helps maintain a reliable and auditable data pipeline.
+
