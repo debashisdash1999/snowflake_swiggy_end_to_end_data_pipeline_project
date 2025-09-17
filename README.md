@@ -841,3 +841,125 @@ This approach ensures that the clean schema always reflects the latest state of 
 - Additional columns like `is_union_territory` and `capital_city_flag` add more context to the location data.  
 - The merge operation efficiently handles both updates and inserts based on the source stream.  
 - This ensures the `restaurant_location` table in the clean schema is always accurate, enriched, and ready for downstream analytical use.
+
+## after running the merge statement
+
+<img width="1346" height="632" alt="image" src="https://github.com/user-attachments/assets/c599290a-abf9-4b6c-a367-334aa1b9022b" />
+
+---
+
+## 📥 Creating Location Dimension Table in Consumption Schema
+
+The next step is to create the **`RESTAURANT_LOCATION_DIM`** table in the **consumption schema**.  
+
+- This table will take data from the **stream object of the clean schema**.  
+- The **primary key** is `restaurant_location_hk` (hash key) that uniquely identifies each record.  
+- To track **Slowly Changing Dimensions (SCD)**, the table includes the following columns:  
+  - `eff_start_dt` → Effective start date of the record  
+  - `eff_end_dt` → Effective end date of the record  
+  - `current_flag` → Indicates whether the record is the current version  
+
+---
+
+### ✅ What is Slowly Changing Dimension (SCD)?
+
+SCD is a technique in data warehousing used to manage **changes in dimension data over time**.  
+
+#### ➤ Types of SCD
+
+1. **SCD Type 0 – Fixed**  
+   - No changes are tracked; original values remain the same.  
+   - ✅ Use case: Historical values should never change, e.g., Social Security Number.  
+
+2. **SCD Type 1 – Overwrite**  
+   - Existing values are **overwritten** with the new values.  
+   - ✅ Use case: Correcting errors or updating non-historic fields, e.g., phone number correction.  
+
+3. **SCD Type 2 – Add New Row**  
+   - When a change occurs, a **new row** is inserted with the updated values.  
+   - Old row is marked with `eff_end_dt` and `current_flag = FALSE`.  
+   - ✅ Use case: Track history of dimension data changes, e.g., customer address or city change.  
+
+4. **SCD Type 3 – Add New Column**  
+   - Only selected historical attributes are tracked in **new columns**.  
+   - ✅ Use case: Keep previous value alongside the current value, e.g., last subscription type.  
+
+5. **Hybrid / Other Types (Type 4, 6, etc.)**  
+   - Combine strategies for specific business needs.  
+
+---
+
+### ✅ Usage in This Project
+
+- The `RESTAURANT_LOCATION_DIM` table uses **SCD Type 2**:  
+  - `eff_start_dt` marks when this version of the record became effective.  
+  - `eff_end_dt` marks when it was superseded by a new version.  
+  - `current_flag` indicates whether the row is the latest/current version.  
+- This allows us to **track historical changes** in locations while maintaining a single source of truth for analytics.
+
+---
+
+### ✅ Merge Operation
+
+- The **second merge** operation will take data from the **clean schema’s stream object** and load/update the `RESTAURANT_LOCATION_DIM` table in the **consumption schema**.  
+- New location records are **inserted** with `current_flag = TRUE`.  
+- Updates to existing locations create a **new row** with the new `eff_start_dt` and the old row’s `current_flag` is set to `FALSE` and `eff_end_dt` is updated.  
+- This ensures that historical changes in location data are preserved for reporting and analytics.
+
+<img width="1356" height="642" alt="image" src="https://github.com/user-attachments/assets/9e91dbca-6597-4fc7-bb6d-ba004a7e202d" />
+
+## ✅ Repeating the Process for Other Entities
+
+The same process will be applied to all other entities in the project.  
+
+- Each entity’s data will be loaded from the **stage schema**, processed in the **clean schema**, and finally stored in the **consumption schema** as dimension or fact tables.  
+- Stream objects and merge operations will be used at each step to capture changes, ensure data integrity, and support incremental updates.  
+- Slowly Changing Dimensions (SCD Type 2) will be implemented where historical tracking is required.
+
+This structured approach ensures consistency, scalability, and reliability across the entire data pipeline.
+
+## ✅ Loading Delta Data for Location Entity
+
+After completing the initial load and processing for the `Location` entity, the next step is to load **delta data**.
+
+- The stream object will capture only the **newly inserted records** from the source.
+
+<img width="1099" height="554" alt="image" src="https://github.com/user-attachments/assets/23cb6220-71f0-49cf-9eae-9322b53048c7" />
+
+- I will re-run the **first merge statement**, which will process these changes.
+- This merge will pick the delta records from the stream and insert them into the `restaurant_location` table in the **clean schema**.
+
+<img width="1072" height="549" alt="image" src="https://github.com/user-attachments/assets/94817d50-213c-4dec-acc1-d4a6f4a2ce95" />
+
+This ensures that incremental updates are handled efficiently without reprocessing the entire dataset.
+
+## The next step is to ensure that the delta data captured in the **clean schema’s stream** is properly consumed and loaded into the dimension table in the **consumption schema**.
+
+- To achieve this, I will re-run the **second merge statement**.
+- This merge operation will process the new records from the stream and insert or update them in the `RESTAURANT_LOCATION_DIM` table.
+- This ensures that any changes captured by the clean schema’s stream are reflected in the final analytical model while preserving historical tracking through SCD Type 2.
+
+<img width="1067" height="530" alt="image" src="https://github.com/user-attachments/assets/1158cdcf-c1cf-4200-8012-cb65dc583557" />
+
+By re-running the merge, the data pipeline stays updated with the latest changes and maintains consistency across schemas.
+
+## ✅ Basic Architecture of this Project after 1st entity operation
+
+The architecture of this project ensures a smooth flow of data from the source to the final analytical models:
+
+1. **Source → Stage Layer (stage schema):**  
+   - Data from CSV files is loaded into the stage schema using Snowflake’s file upload feature.
+   - A stream object captures changes in this layer and passes them to the next stage.
+
+2. **Stage → Clean Layer (clean schema):**  
+   - The data is processed, transformed, and enriched in the clean schema.
+   - Additional columns and audit fields are added to enhance data context.
+   - A stream object here captures changes to be forwarded to the final layer.
+
+3. **Clean → Consumption Layer (consumption schema):**  
+   - The data is loaded into the dimension table (`RESTAURANT_LOCATION_DIM`) using a second merge operation.
+   - Slowly Changing Dimension (SCD Type 2) logic is applied to track historical changes efficiently.
+
+This architecture allows for incremental data loading, real-time change tracking, and robust historical data management.  
+The **Location entity part** of the project is now complete, with data flowing seamlessly across schemas and transformations ensuring integrity and consistency.
+
