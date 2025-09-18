@@ -368,8 +368,10 @@ MERGE INTO
     );
 
 SELECT * FROM CONSUMPTION_SCH.RESTAURANT_LOCATION_DIM; 
-// ------------------------------------------------
-// Part -2 loading the delta data
+
+ ------------------------------------------------
+
+-- Part -2 loading the delta data
 
 list @stage_sch.csv_stg/delta/location/;
 
@@ -393,3 +395,4 @@ from (
 )
 file_format = (format_name = 'stage_sch.csv_file_format')
 on_error = abort_statement;
+
