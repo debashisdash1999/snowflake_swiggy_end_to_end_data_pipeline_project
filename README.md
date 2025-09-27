@@ -986,6 +986,8 @@ The same processing pattern used for the **Location Entity** will be applied her
 
 This ensures the **Restaurant Dimension** always has accurate, enriched, and historically traceable records.
 
+<img width="1242" height="643" alt="image" src="https://github.com/user-attachments/assets/df2411c5-9a85-4fac-b699-504f8892873d" />
+
 ### 🔑 Points to Remember
 
 - Every data project that deals with large data volumes usually starts with an **initial load** (first-time load).  
@@ -1010,3 +1012,4 @@ This ensures the **Restaurant Dimension** always has accurate, enriched, and his
   - Ensures data is always up to date, commonly used in **event-driven systems** (e.g., fraud detection, IoT, or live dashboards).  
 
 ✅ Choosing the right strategy depends on the **business requirement**, **data volume**, and **latency tolerance** of the system.
+
