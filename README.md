@@ -1013,3 +1013,50 @@ This ensures the **Restaurant Dimension** always has accurate, enriched, and his
 
 ✅ Choosing the right strategy depends on the **business requirement**, **data volume**, and **latency tolerance** of the system.
 
+## 👤 Customer Entity Data Processing
+
+Now we move to the **Customer master dataset**.  
+The objective is to transform this source customer data into a **Customer Dimension Table** following the same architecture flow as Location and Restaurant entities.
+
+### 🔹 Steps Involved
+
+1. **Initial Load**
+   - Load the raw customer data into the **stage schema**.
+   - Apply basic transformations (casting, cleaning, standardization).
+   - Capture changes using a **stream object**.
+
+2. **Load into Clean Schema**
+   - Create the **restaurant_customer** table in the clean schema.  
+   - Add additional columns such as:
+     - `customer_surrogate_key` (auto-incremented PK for uniqueness)  
+     - `active_flag` (Y/N)  
+     - `created_ts` / `modified_ts`  
+   - Use a **merge operation** to handle updates (changed customer info) and inserts (new customers).
+
+3. **Load into Consumption Schema (Dimension Table)**
+   - Target table: `CUSTOMER_DIM` in the consumption schema.  
+   - This will include:
+     - `customer_hk` (hash key for uniqueness)  
+     - Customer demographics and attributes (name, city, contact details, etc.)  
+     - SCD2 tracking fields:
+       - `eff_start_dt`
+       - `eff_end_dt`
+       - `is_current` (Flag to indicate the current record)
+
+4. **Delta / Incremental Loads**
+   - Streams capture newly inserted or updated customers.  
+   - Re-run merge statements to:
+     - Insert new customers into the clean and consumption layers.  
+     - Update existing customer records with SCD2 logic.
+
+---
+<img width="1275" height="613" alt="image" src="https://github.com/user-attachments/assets/b671a153-a578-4370-a713-b844b35dc04f" />
+
+
+### ✅ Summary
+
+- **Stage → Clean → Consumption** pipeline is followed consistently.  
+- Customer dimension supports **SCD2**, enabling historical tracking of customer profile changes.  
+- Delta loads ensure the system is always up to date while preserving history.  
+- This approach provides a **robust and analytics-ready customer dataset**.
+
