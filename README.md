@@ -963,3 +963,50 @@ The architecture of this project ensures a smooth flow of data from the source t
 This architecture allows for incremental data loading, real-time change tracking, and robust historical data management.  
 The **Location entity part** of the project is now complete, with data flowing seamlessly across schemas and transformations ensuring integrity and consistency.
 
+
+## 🍽️ Restaurant Entity Data Processing
+
+Next, I will work on another master dataset called **Restaurant Entity**.  
+The goal is to process and transform this master data into a **Restaurant Dimension** in the **consumption schema**.
+
+### 🔹 Objective
+- Convert the raw restaurant master data into a dimension table.
+- Create a **hash key** (`restaurant_hk`) as the primary key.
+- Include `restaurant_id` and all other restaurant-related attributes.
+
+### 🔹 Data Load
+- **Initial Load:** 5 records in the restaurant master dataset.
+- **Delta Load:** 2 delta load files to be processed incrementally.
+
+### 🔹 Processing Pattern
+The same processing pattern used for the **Location Entity** will be applied here:
+1. **Stage Schema:** Load raw restaurant master data.  
+2. **Clean Schema:** Apply transformations, enrich the dataset, and add audit columns.  
+3. **Consumption Schema:** Use a merge operation to load data into the `RESTAURANT_DIM` table, applying **SCD Type 2** for historical tracking.
+
+This ensures the **Restaurant Dimension** always has accurate, enriched, and historically traceable records.
+
+### 🔑 Points to Remember
+
+- Every data project that deals with large data volumes usually starts with an **initial load** (first-time load).  
+  - Example: In the Restaurant Entity, the first-time load included **5 rows**.  
+
+- After the initial load, any **new or updated data** is processed as **delta processing** (incremental load).  
+  - Example: In the Restaurant Entity, **2 new files** (containing new records) were captured and processed as part of the **delta load**.  
+
+- This approach ensures that the system efficiently handles data growth while maintaining accuracy and historical tracking.
+
+
+- **Batch Processing**  
+  - Delta data is processed once per day (or less frequently).  
+  - Common in **enterprise data warehouses (EDW)** where daily loads are sufficient.  
+
+- **Micro-Batching**  
+  - Data is processed at smaller intervals, such as **every hour** or **every 15 minutes**.  
+  - Balances between **near real-time availability** and **system efficiency**.  
+
+- **Real-Time Streaming**  
+  - Every change from the source is captured and pushed immediately to the warehouse using **Change Data Capture (CDC)**.  
+  - Ensures data is always up to date, commonly used in **event-driven systems** (e.g., fraud detection, IoT, or live dashboards).  
+
+✅ Choosing the right strategy depends on the **business requirement**, **data volume**, and **latency tolerance** of the system.
