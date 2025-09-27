@@ -1060,3 +1060,28 @@ The objective is to transform this source customer data into a **Customer Dimens
 - Delta loads ensure the system is always up to date while preserving history.  
 - This approach provides a **robust and analytics-ready customer dataset**.
 
+## 🔄 Applying the Same Pattern to Other Entities
+
+Just like **Location, Restaurant, Customer, and Customer Address**,  
+the same data flow is applied to all other entities:
+
+1. **Stage Schema** → Initial & Delta files are staged.  
+2. **Clean Schema** → Data is standardized, enriched, and surrogate keys are added.  
+   - Merge operation ensures inserts/updates.  
+   - Streams track incremental changes.  
+3. **Consumption Schema** → Dimension tables are built with hash keys and SCD2 logic.  
+   - eff_start_dt, eff_end_dt, current_flag manage historical changes.  
+
+This pattern is consistently followed for:  
+- **Menu**  
+- **Delivery Agent**  
+- **Orders**  
+- **Order Items**  
+- **Delivery**  
+- **Login Audit**  
+
+✅ By applying this uniform design, the project ensures:  
+- Data consistency across layers  
+- Scalable handling of initial and delta loads  
+- Full support for Slowly Changing Dimensions (SCD2)  
+- Robust pipelines ready for analytics and reporting
