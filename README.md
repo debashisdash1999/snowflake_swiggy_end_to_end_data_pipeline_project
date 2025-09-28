@@ -577,7 +577,7 @@ Use Stream objects to capture changes (inserts and updates) while loading data, 
 
 ## 📊 Dimension Table Population
 
-## 📥 Data Loading and Processing – Location Entity
+### 📥 Data Loading and Processing – Location Entity
 
 After creating tables for each entity, the next step is to **load and process the data**.
 
