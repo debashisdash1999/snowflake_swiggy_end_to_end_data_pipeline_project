@@ -1257,3 +1257,4 @@ The data warehouse follows a **Star Schema** model with a central fact table (`O
                                +-----------------+
 ```
 
+<img width="1024" height="1024" alt="Star ERD" src="https://github.com/user-attachments/assets/92ccd1c2-1f99-4f77-8166-8b524e11492d" />
