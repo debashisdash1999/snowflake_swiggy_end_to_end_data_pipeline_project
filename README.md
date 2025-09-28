@@ -1124,10 +1124,23 @@ In short:
 
 ### 📅 Date Dimension
 Before creating the fact table, we also build a **Date Dimension**.  
-This helps analyze metrics across:
-- Day, Month, Quarter, Year  
-- Weekday vs Weekend  
-- Holiday vs Non-Holiday  
+
+Every data warehouse project needs a **Date Dimension (date_dim)** table.  
+
+I will start with a **minimum order date**:  
+- First, get the order date from the `order` table.  
+- Take the minimum of that date.  
+- From there, use a **Common Table Expression (CTE)** approach to create the dimension table.
+
+In this **date_dim table**, I will have:  
+- `date_dim_hk` → NUMBER (Primary Key)  
+- `calendar_date` → DATE (Unique)  
+- Other **date-related columns** such as day, month, quarter, year, weekend flag, etc.  
+
+In the **INSERT statement**:  
+- It first takes the minimum value from the `order` table.  
+- Once it gets this one, it **recursively follows the approach** to generate all dates for the date dimension.  
+  
 
 ✅ The Date Dimension is essential for time-based reporting in BI tools.
 
