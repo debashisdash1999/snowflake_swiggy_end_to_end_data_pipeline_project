@@ -1261,4 +1261,11 @@ This enforces **data consistency** and keeps the **star schema relationships int
   - Performance tracking of delivery agents.  
 
 ---
+## KPI Views
+
+After creating the fact and dimension tables, I will define KPI views to analyze revenue at different time levels:
+
+- **Annual Revenue View** → `vw_yearly_revenue_kpis`
+- **Monthly Revenue View** → `vw_monthly_revenue_kpis`
+- **Daily Revenue View** → `vw_daily_revenue_kpis`
 
