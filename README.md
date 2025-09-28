@@ -1156,9 +1156,93 @@ In the **INSERT statement**:
 The data warehouse follows a **Star Schema** model with a central fact table (`ORDER_ITEM_FACT`) connected to multiple dimension tables.
 
 ### 📊 Fact Table
-- **ORDER_ITEM_FACT**
-  - Stores transactional data at the lowest granularity (each order item).
-  - Contains measures like: `quantity`, `price`, `delivery_status`, `estimated_time`.
+# Order Item Fact
+
+## Table Creation
+
+The **Order Item Fact** table is created as the central fact table with the following structure:
+
+- **Order Item Fact SK** → Surrogate key (auto-incremented, acts as primary key in DW).
+- **Order Item ID** → Natural primary key from the source system.
+- **Order ID**
+- **Customer Dim Key**
+- **Customer Address Dim Key**
+- **Restaurant Location Dim Key**
+- **Menu Dim Key**
+- **Delivery Agent Dim Key**
+- **Order Date Dim Key**
+- **Quantity**
+- **Price**
+- **Subtotal**
+- **Delivery Status**
+- **Estimated Time**
+
+### Why Surrogate Key (SK)?
+- **Not PK because:** The `order_item_id` from the source is already a natural primary key.  
+- **Usage of SK:** Provides consistency across DW, handles SCD changes, avoids dependency on source system keys.
+
+---
+
+## Merge Operation
+
+- **Update:** If a matching record exists and changes are detected → update the fact row.  
+- **Insert:** If the record is new → insert into the fact table.  
+- **Join:** Merge statement connects the fact table with all related dimension tables using foreign keys.
+
+---
+
+## Foreign Key Constraints
+
+After populating fact and dimension tables, `ALTER TABLE` statements enforce relationships:
+
+```sql
+ALTER TABLE consumption_sch.order_item_fact
+    ADD CONSTRAINT fk_order_item_fact_customer_dim
+    FOREIGN KEY (customer_dim_key)
+    REFERENCES consumption_sch.customer_dim (customer_hk);
+
+ALTER TABLE consumption_sch.order_item_fact
+    ADD CONSTRAINT fk_order_item_fact_customer_address_dim
+    FOREIGN KEY (customer_address_dim_key)
+    REFERENCES consumption_sch.customer_address_dim (customer_address_hk);
+
+ALTER TABLE consumption_sch.order_item_fact
+    ADD CONSTRAINT fk_order_item_fact_restaurant_dim
+    FOREIGN KEY (restaurant_dim_key)
+    REFERENCES consumption_sch.restaurant_dim (restaurant_hk);
+
+ALTER TABLE consumption_sch.order_item_fact
+    ADD CONSTRAINT fk_order_item_fact_restaurant_location_dim
+    FOREIGN KEY (restaurant_location_dim_key)
+    REFERENCES consumption_sch.restaurant_location_dim (restaurant_location_hk);
+
+ALTER TABLE consumption_sch.order_item_fact
+    ADD CONSTRAINT fk_order_item_fact_menu_dim
+    FOREIGN KEY (menu_dim_key)
+    REFERENCES consumption_sch.menu_dim (menu_dim_hk);
+
+ALTER TABLE consumption_sch.order_item_fact
+    ADD CONSTRAINT fk_order_item_fact_delivery_agent_dim
+    FOREIGN KEY (delivery_agent_dim_key)
+    REFERENCES consumption_sch.delivery_agent_dim (delivery_agent_hk);
+
+ALTER TABLE consumption_sch.order_item_fact
+    ADD CONSTRAINT fk_order_item_fact_delivery_date_dim
+    FOREIGN KEY (order_date_dim_key)
+    REFERENCES consumption_sch.date_dim (date_dim_hk);
+```
+## Short Explanation of Constraints
+
+Each `ALTER TABLE` adds a **foreign key** to maintain referential integrity.
+
+This ensures that:
+
+- Every `customer_dim_key` in the fact table must exist in `customer_dim`.
+- Every `restaurant_dim_key` must exist in `restaurant_dim`.
+- The same rule applies for **address, location, menu, delivery agent, and date**.
+
+This enforces **data consistency** and keeps the **star schema relationships intact**.
+
 
 ### 📐 Dimension Tables
 - **CUSTOMER_DIM** → Customer details.  
