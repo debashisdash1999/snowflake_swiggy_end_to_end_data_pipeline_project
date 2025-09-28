@@ -1137,3 +1137,123 @@ This helps analyze metrics across:
 - Scalable handling of initial and delta loads  
 - Full support for Slowly Changing Dimensions (SCD2)  
 - Robust pipelines ready for analytics and reporting
+
+## ⭐ Star Schema Design
+
+The data warehouse follows a **Star Schema** model with a central fact table (`ORDER_ITEM_FACT`) connected to multiple dimension tables.
+
+### 📊 Fact Table
+- **ORDER_ITEM_FACT**
+  - Stores transactional data at the lowest granularity (each order item).
+  - Contains measures like: `quantity`, `price`, `delivery_status`, `estimated_time`.
+
+### 📐 Dimension Tables
+- **CUSTOMER_DIM** → Customer details.  
+- **CUSTOMER_ADDRESS_DIM** → Detailed address (SCD Type 2).  
+- **MENU_DIM** → Menu items (name, price, category, availability).  
+- **RESTAURANT_DIM** → Restaurant master data.  
+- **RESTAURANT_LOCATION_DIM** → Restaurant location details (city, state, zip, region).  
+- **DELIVERY_AGENT_DIM** → Delivery agent details (SCD Type 2).  
+- **DATE_DIM** → Calendar and time attributes for trend analysis.  
+
+### 🔗 How It Works
+- `ORDER_ITEM_FACT` connects with all dimension tables through foreign keys.  
+- This allows business questions like:
+  - Total sales by restaurant and city.  
+  - Order trends by customer and month.  
+  - Performance tracking of delivery agents.  
+
+---
+
+### 📌 Schema Diagram (Star Layout)
+```text
+                          +----------------------+
+                          |  CUSTOMER_ADDRESS_DIM|
+                          |----------------------|
+                          | CUSTOMER_ADDRESS_HK  |
+                          | ADDRESS_ID           |
+                          | CUSTOMER_ID_FK       |
+                          | FLAT_NO              |
+                          | HOUSE_NO             |
+                          | FLOOR                |
+                          | LANDMARK             |
+                          | LOCALITY             |
+                          | CITY                 |
+                          | STATE                |
+                          | PINCODE              |
+                          | COORDINATES          |
+                          | PRIMARY_FLAG         |
+                          | EFF_START_DATE       |
+                          | EFF_END_DATE         |
+                          | IS_CURRENT           |
+                          +----------+-----------+
+                                      |
+                                      |
++--------------------+                |   
+|   CUSTOMER_DIM     |                |
+|--------------------|                |
+| CUSTOMER_HK        |                |
+| CUSTOMER_ID        |                |
+| NAME               |                |
+| EMAIL              |                |
+| PHONE              |                |
+| CUSTOMER_TYPE      |                |
+| EFF_START_DATE     |                |
+| EFF_END_DATE       |                |
+| IS_CURRENT         |                |
++---------+----------+                |
+          |                           |
+          |                           |
+          |                           |
+          v                           v
+                  +-----------------------------------+
+                  |         ORDER_ITEM_FACT           |
+                  |-----------------------------------|
+                  | ORDER_ITEM_FACT_PK                |
+                  | ORDER_ITEM_ID                     |
+                  | ORDER_ID                          |
+                  | CUSTOMER_HK (FK)                  |
+                  | CUSTOMER_ADDRESS_DIM_KEY (FK)     |
+                  | RESTAURANT_DIM_KEY (FK)           |
+                  | RESTAURANT_LOCATION_DIM_KEY (FK)  |
+                  | MENU_DIM_KEY (FK)                 |
+                  | DELIVERY_AGENT_DIM_KEY (FK)       |
+                  | ORDER_DATE_DIM_KEY (FK)           |
+                  | QUANTITY                          |
+                  | PRICE                             |
+                  | DELIVERY_STATUS                   |
+                  | ESTIMATED_TIME                    |
+                  +-----------------+-----------------+
+                                    |
+          ------------------------------------------------------------
+          |             |                 |               |          |
+          v             v                 v               v          v
++----------------+   +----------------+  +----------------+  +---------------+
+| RESTAURANT_DIM |   | RESTAURANT_    |  |    MENU_DIM    |  | DELIVERY_     |
+|----------------|   | LOCATION_DIM   |  |----------------|  | AGENT_DIM     |
+| RESTAURANT_HK  |   | LOCATION_HK    |  | MENU_DIM_HK    |  | DELIVERY_AGENT_HK |
+| RESTAURANT_ID  |   | LOCATION_ID    |  | MENU_ID        |  | AGENT_ID      |
+| NAME           |   | CITY           |  | RESTAURANT_ID  |  | NAME          |
+| PHONE          |   | STATE          |  | ITEM_NAME      |  | PHONE         |
+| PRICING_TYPE   |   | STATE_CODE     |  | DESCRIPTION    |  | VEHICLE_TYPE  |
+| ...            |   | IS_UNION_TERR. |  | PRICE          |  | STATUS        |
+| EFF_START_DATE |   | CAPITAL_CITY   |  | CATEGORY       |  | EFF_START_DATE|
+| EFF_END_DATE   |   | ZIP_CODE       |  | AVAILABILITY   |  | EFF_END_DATE  |
+| IS_CURRENT     |   | EFF_START_DATE |  | EFF_START_DATE |  | IS_CURRENT    |
++----------------+   | EFF_END_DATE   |  | EFF_END_DATE   |  +---------------+
+                     | IS_CURRENT     |  | IS_CURRENT     |
+                     +----------------+  +----------------+
+
+                               +-----------------+
+                               |    DATE_DIM     |
+                               |-----------------|
+                               | DATE_DIM_HK     |
+                               | CALENDAR_DATE   |
+                               | YEAR            |
+                               | QUARTER         |
+                               | MONTH           |
+                               | WEEK            |
+                               | DAY             |
+                               +-----------------+
+```
+
