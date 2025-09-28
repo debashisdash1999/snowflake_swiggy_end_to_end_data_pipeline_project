@@ -454,26 +454,26 @@ This structure helps in:
 
 
 ### Reference Images of data loading into snowflake stage
-- 1 
+## 1 
 <img width="1350" height="657" alt="image" src="https://github.com/user-attachments/assets/34096b23-f4ea-43a0-9324-8fab35763925" />
 After clicking the "+ Files"
 
-- 2 
+## 2 
 <img width="1144" height="666" alt="image" src="https://github.com/user-attachments/assets/9fa57606-4c96-406a-8dc3-76da68a99c6f" />
 - Check "Select database, schema abd stage"  
 - Goto "Browse" and upload the files"
 
-- 3 
+## 3 
 <img width="666" height="549" alt="image" src="https://github.com/user-attachments/assets/73a3a538-c960-4651-b989-639b5fb3736f" />
 
 - Specify the path "initial", where the initial load files will be loaded.
 
-- 4 
+## 4 
 <img width="701" height="615" alt="image" src="https://github.com/user-attachments/assets/64eee676-46ce-4df6-9915-c2da71cee84b" />
 
 - Click "Upload" in the right side lower corner
 
-- 5 
+## 5 
 <img width="691" height="655" alt="image" src="https://github.com/user-attachments/assets/abcfa81d-c5b6-4bc4-ac41-3a4bf53e3d36" />
 
 - Same steps for Delta loads, into the "Delta" path
