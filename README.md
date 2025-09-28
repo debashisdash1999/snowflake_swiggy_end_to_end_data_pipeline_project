@@ -573,6 +573,9 @@ Use Stream objects to capture changes (inserts and updates) while loading data, 
 
 - Using streams is critical for handling incremental data changes and supporting robust data pipelines.
 
+---
+
+## 📊 Dimension Table Population
 
 ## 📥 Data Loading and Processing – Location Entity
 
@@ -1049,7 +1052,7 @@ The objective is to transform this source customer data into a **Customer Dimens
      - Insert new customers into the clean and consumption layers.  
      - Update existing customer records with SCD2 logic.
 
----
+
 <img width="1275" height="613" alt="image" src="https://github.com/user-attachments/assets/b671a153-a578-4370-a713-b844b35dc04f" />
 
 
@@ -1078,7 +1081,56 @@ This pattern is consistently followed for:
 - **Orders**  
 - **Order Items**  
 - **Delivery**  
-- **Login Audit**  
+- **Login Audit**
+
+---
+## 📊 Fact Table Population
+
+Now that the **dimension tables** are ready in the **consumption schema**  
+(Location, Restaurant, Customer, Customer Address, Menu, Delivery Agent with SCD2 applied),  
+it’s time to move on to the **transaction entities**:
+
+- **Delivery**
+- **Orders**
+- **Order Items**
+
+### 🔎 Granularity of a Fact Table
+Granularity means the **level of detail** captured in a fact table.  
+It answers the question: *“What does one row in this fact table represent?”*  
+
+For this project:
+- If we set **granularity = Order**, each row would represent a whole order (summary level).
+- If we set **granularity = Order Item**, each row represents an individual item within an order (fine-grained level).
+
+✅ We choose **Order Item granularity**, because:
+- It provides the most detailed view of transactions.  
+- From here, you can always aggregate upwards (to order level, customer level, restaurant level, etc.).  
+- It avoids losing important details (like multiple items within the same order).  
+
+### 📌 Why Only One Fact Table (Order Item Fact)?
+Even though we have three transaction entities (**Delivery, Orders, Order Items**),  
+we create **one single fact table** at the **Order Item** level because:
+- **Order Item Fact** already captures the lowest granularity.  
+- Delivery and Orders can be linked through **foreign keys/dimensions**.  
+- Storing multiple fact tables at different granularities would duplicate data and cause inconsistencies.  
+- The single fact can be used to roll up or join with dimensions to answer all analytics questions:
+  - Total sales by restaurant
+  - Number of deliveries by city
+  - Revenue by customer segment
+  - Order trends over time  
+
+In short:  
+➡ **Order Item Fact** is chosen because it is the most granular, flexible, and avoids redundancy.  
+
+### 📅 Date Dimension
+Before creating the fact table, we also build a **Date Dimension**.  
+This helps analyze metrics across:
+- Day, Month, Quarter, Year  
+- Weekday vs Weekend  
+- Holiday vs Non-Holiday  
+
+✅ The Date Dimension is essential for time-based reporting in BI tools.
+
 
 ✅ By applying this uniform design, the project ensures:  
 - Data consistency across layers  
