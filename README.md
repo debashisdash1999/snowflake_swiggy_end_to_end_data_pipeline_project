@@ -1288,4 +1288,79 @@ These views make it easier for business users and analysts to query summarized d
 - They provide **ready-made metrics**: revenue is pre-calculated at required levels.  
 - They support **dashboards and BI tools** (like Power BI or Tableau) directly, improving performance and usability.  
 
+---
+
+# PART 2
+
+## Data Pipeline Automation (Part 2)
+
+### Overview
+In real production applications, data pipelines ensure that as soon as new data lands in the staging area (internal or external), it automatically flows through multiple layers:
+
+**Stage → Clean → Consumption → Dashboard/Reporting**
+
+In this project, the objective is to ensure that the **latest data reaches the `order_item_fact` table**. But before that:
+
+- Data must be available in all **dimension tables** under the **Consumption schema**.
+- Data must first pass through the **Clean schema**.
+- Before that, it should be loaded into the **Stage schema**.
+- Finally, the source data originates from the **Internal Stage**.
+
+---
+
+## Challenges with Manual Scripts
+Until now, the worksheets contained both:
+- **DDL statements** (object creation: tables, streams, etc.)
+- **DML statements** (data load, merges, transformations)
+
+For this project, I created around **35–40 database objects** inside:
+
+sandbox → stage_sch → clean_sch → consumption_sch → common_sch
+
+
+At production scale (like a food aggregator such as Swiggy), this could mean **hundreds of tables and thousands of columns**—making raw worksheets **hard to maintain**.
+
+**Solution:**
+- Separate **DDL** and **DML**
+- Wrap **DML logic into Stored Procedures (SPs)**
+- Orchestrate SPs with **Parent SP + Tasks**
+
+---
+
+## Approach
+
+### 1. Stage Schema (Copy Commands)
+- Each **COPY command** for loading data into Stage tables is wrapped inside a **Stored Procedure (SP)**.
+- All SPs are called by a **Parent SP** (Orchestrating SP).
+- Execution is **sequential**:  
+  `location → restaurant → customer → orders → …`
+
+---
+
+### 2. Clean Schema (Merge Operations)
+- Data from Stage is moved to Clean schema using **MERGE operations**.
+- Each entity’s MERGE statement is wrapped in its own SP.
+- All SPs are then orchestrated with a **Parent SP**.
+
+---
+
+### 3. Consumption Schema (Final Merge)
+- Data is then merged from Clean → Consumption schema into **dimension tables** (`dim_location`, `dim_customer`, etc.).
+- Similar approach as step 2: SPs per entity + Parent SP for orchestration.
+
+---
+
+### 4. Orchestration with Tasks
+- A **Task object** invokes the Parent SP.
+- Ensures **end-to-end automation** of the pipeline.
+
+---
+
+## Summary
+- ✅ DML wrapped in Stored Procedures  
+- ✅ Sequential orchestration using Parent SPs  
+- ✅ Task scheduled for automation  
+- ✅ End-to-end pipeline: **Stage → Clean → Consumption → Fact tables → Dashboard**  
+
+This approach makes the project **scalable, automated, and closer to production-grade**.
 
