@@ -265,6 +265,7 @@ Correct approach:
 - In data warehouses, we balance normalization with performance and usability - often using **star schemas** where dimension tables are slightly denormalized for query efficiency.
 
 ---
+# PART 1:-
 ## Setting up the Snowflake Sandbox Environment
 
 In this step, we create a **database sandbox** and all necessary **schemas, file formats, internal stages, tags, and masking policies** to support the end-to-end data pipeline.
