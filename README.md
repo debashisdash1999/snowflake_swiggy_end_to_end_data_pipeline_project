@@ -1364,3 +1364,33 @@ At production scale (like a food aggregator such as Swiggy), this could mean **h
 
 This approach makes the project **scalable, automated, and closer to production-grade**.
 
+# Initial Setup (Sandbox & Security)
+
+## 1. Role and Warehouse
+- The development work is done using the **SYSADMIN role** and a dedicated **warehouse** for processing.
+
+## 2. Database and Schemas
+- A **sandbox database** is created to keep development activities isolated.  
+- Four schemas are defined for the project:
+  - **stage_sch** → Raw data landing area.  
+  - **clean_sch** → Data after applying cleaning and transformations.  
+  - **consumption_sch** → Final schema for reporting, dashboards, and KPIs.  
+  - **common** → Shared objects such as tags and policies.  
+
+## 3. File Format
+- A reusable **CSV file format** is created for structured ingestion of raw files (handles delimiters, headers, nulls, etc.).  
+
+## 4. Internal Stage
+- An **internal stage** is set up in Snowflake for managing uploaded files before they are copied into tables.  
+
+## 5. Data Governance with Tags & Masking
+- **Tag Objects**: Define classification labels like *PII*, *Price*, *Sensitive*, *Email*.  
+- **Masking Policies**: Protect sensitive data by masking values:
+  - PII masking  
+  - Email masking  
+  - Phone masking  
+
+## Why This Setup?
+- Provides a **structured multi-layer architecture** (Stage → Clean → Consumption).  
+- Ensures **security and compliance** with masking policies for sensitive data.  
+- Keeps the environment **organized and production-ready**.
