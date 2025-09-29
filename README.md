@@ -1263,9 +1263,28 @@ This enforces **data consistency** and keeps the **star schema relationships int
 ---
 ## KPI Views
 
-After creating the fact and dimension tables, I will define KPI views to analyze revenue at different time levels:
+After creating the fact and dimension tables, I will define KPI views to analyze revenue at different levels of granularity.  
+These views make it easier for business users and analysts to query summarized data without directly accessing complex fact and dimension tables.
 
-- **Annual Revenue View** → `vw_yearly_revenue_kpis`
-- **Monthly Revenue View** → `vw_monthly_revenue_kpis`
-- **Daily Revenue View** → `vw_daily_revenue_kpis`
+### 1. Annual Revenue View → `vw_yearly_revenue_kpis`
+- **Purpose:** Provides total revenue grouped by year.  
+- **Significance:** Helps management track long-term growth trends, compare performance year-over-year, and evaluate strategic goals.
+
+### 2. Monthly Revenue View → `vw_monthly_revenue_kpis`
+- **Purpose:** Provides total revenue grouped by year and month.  
+- **Significance:** Useful for identifying **seasonal patterns**, monthly growth, and short-term business performance.  
+  For example, spikes during festivals or holidays can be analyzed.
+
+### 3. Daily Revenue View → `vw_daily_revenue_kpis`
+- **Purpose:** Provides total revenue grouped by each calendar date.  
+- **Significance:** Helps in **day-to-day monitoring** of sales, detecting anomalies, and supporting operational decision-making.  
+  Example: sudden drops in daily revenue can alert teams to investigate potential issues quickly.
+
+---
+
+### Why KPI Views?
+- They **abstract complexity**: business teams don’t need to join multiple tables.  
+- They provide **ready-made metrics**: revenue is pre-calculated at required levels.  
+- They support **dashboards and BI tools** (like Power BI or Tableau) directly, improving performance and usability.  
+
 
