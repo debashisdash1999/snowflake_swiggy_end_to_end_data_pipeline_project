@@ -1,9 +1,11 @@
 # Swiggy End-to-End Data Engineering Project
 
 ## Why Swiggy?
+
 To truly learn **end-to-end data engineering**, we need to solve a real-life business problem. Since we all use food delivery apps, it is easier to connect the dots and understand the data flow.
 
 Food aggregator apps (like Swiggy) typically manage these entities:
+
 - Restaurant
 - Catalog/Menu
 - Promotion
@@ -14,7 +16,9 @@ Food aggregator apps (like Swiggy) typically manage these entities:
 - Rating
 
 ### Business Goals
+
 The leadership team wants insights such as:
+
 - Total revenue
 - Average revenue per item
 - Average revenue per order
@@ -29,10 +33,11 @@ This project uses **Swiggy’s food ordering subprocess** as an example to desig
 
 ---
 
-##  Project Data
+## Project Data
+
 - Synthetic data generated in **CSV format** for different entities.
 - Files uploaded using **Snowflake’s File Upload feature**.
-- Entities considered: `Location`, `Restaurant`, `Customer`, `Customer-adress`, `Menu`, `Delivery_agent`, `Orders`, `Order-items`, `Delivery`,  `Login-audit` 
+- Entities considered: `Location`, `Restaurant`, `Customer`, `Customer-adress`, `Menu`, `Delivery_agent`, `Orders`, `Order-items`, `Delivery`, `Login-audit`
 
 ---
 
@@ -40,17 +45,17 @@ This project uses **Swiggy’s food ordering subprocess** as an example to desig
 
 CSV Files → Snowflake Stage → Transformation Layer → Fact & Dimension Tables → Streamlit Dashboard
 
-
 ### Entities and Flow
-1. **Location Entity** → Define target serviceable locations.  
-2. **Restaurant Entity** → Onboard restaurants for each location.  
-3. **Menu Entity** → Upload restaurant catalogs.  
-4. **Login Entity** → Handle customer login via email/phone.  
-5. **Customer Entity** → Maintain customer profiles.  
-6. **Address Entity** → Store delivery addresses.  
-7. **Order Entity** → Track customer orders.  
-8. **Delivery Agent Entity** → Assign agents to orders.  
-9. **Delivery Entity** → Record final delivery details.  
+
+1. **Location Entity** → Define target serviceable locations.
+2. **Restaurant Entity** → Onboard restaurants for each location.
+3. **Menu Entity** → Upload restaurant catalogs.
+4. **Login Entity** → Handle customer login via email/phone.
+5. **Customer Entity** → Maintain customer profiles.
+6. **Address Entity** → Store delivery addresses.
+7. **Order Entity** → Track customer orders.
+8. **Delivery Agent Entity** → Assign agents to orders.
+9. **Delivery Entity** → Record final delivery details.
 
 At a high level, **9–10 entities (tables)** are required to support the business process.
 
@@ -59,6 +64,7 @@ At a high level, **9–10 entities (tables)** are required to support the busine
 ## Breakdown of Sections
 
 ### 1. Implement E2E Data Flow
+
 - Create **Database and Schema** in Snowflake.
 - Load CSV files into staging tables.
 - Process **Location Entity**.
@@ -70,24 +76,27 @@ At a high level, **9–10 entities (tables)** are required to support the busine
 ---
 
 ### 2. Automate E2E Data Pipeline Using Stored Procedure
-- **Why Automate?** → To remove manual intervention.  
-- Create **Stored Procedures** for transformations.  
-- Link multiple procedures for sequential processing.  
+
+- **Why Automate?** → To remove manual intervention.
+- Create **Stored Procedures** for transformations.
+- Link multiple procedures for sequential processing.
 - Trigger stored procedures using **Snowflake Tasks**.
 
 ---
 
 ### 3. Automate E2E Data Pipeline Using Task Tree
-- **Challenges** with only stored procedure–based approach.  
-- Use **Task and Task Tree** for orchestration.  
-- Visualize and monitor the overall pipeline in Snowflake.  
+
+- **Challenges** with only stored procedure–based approach.
+- Use **Task and Task Tree** for orchestration.
+- Visualize and monitor the overall pipeline in Snowflake.
 
 ---
 
 ### 4. Process Large Data Volume
-- Ingest **large data volumes** into Snowflake.  
-- Validate **processing speed & performance**.  
-- Ensure **Streamlit dashboard** scales with bigger datasets.  
+
+- Ingest **large data volumes** into Snowflake.
+- Validate **processing speed & performance**.
+- Ensure **Streamlit dashboard** scales with bigger datasets.
 
 ---
 
@@ -103,32 +112,35 @@ Understanding entity relationships is crucial in any **data engineering project*
 
 ### Entity Relationships
 
-- **Customer → Customer_Address**  
-  - One-to-many relationship  
-  - A single customer can have one or multiple addresses.  
+- **Customer → Customer_Address**
 
-- **Restaurant → Menu**  
-  - One-to-many relationship  
-  - Each restaurant can have multiple menu items.  
+  - One-to-many relationship
+  - A single customer can have one or multiple addresses.
 
-- **Orders → Order_Items**  
-  - One-to-many relationship  
-  - For each order placed, the `Orders` table gets one record, while the `Order_Items` table may hold one or more records depending on the number of items in the order.  
+- **Restaurant → Menu**
 
-- **Delivery_Agent → Delivery**  
-  - One-to-many relationship  
-  - Each delivery agent can be associated with multiple deliveries.  
+  - One-to-many relationship
+  - Each restaurant can have multiple menu items.
 
-- **Customer → Login_Audit**  
-  - One-to-many relationship  
-  - Each customer may log in multiple times, creating multiple records in the `Login_Audit` table.  
+- **Orders → Order_Items**
+
+  - One-to-many relationship
+  - For each order placed, the `Orders` table gets one record, while the `Order_Items` table may hold one or more records depending on the number of items in the order.
+
+- **Delivery_Agent → Delivery**
+
+  - One-to-many relationship
+  - Each delivery agent can be associated with multiple deliveries.
+
+- **Customer → Login_Audit**
+  - One-to-many relationship
+  - Each customer may log in multiple times, creating multiple records in the `Login_Audit` table.
 
 ---
 
 ## ER Diagram
 
 <img width="1303" height="768" alt="ERD" src="https://github.com/user-attachments/assets/a3644d53-6bd5-4b57-8959-40198dd2f363" />
-
 
 ---
 
@@ -137,6 +149,7 @@ These relationships form the backbone for building **fact and dimension tables**
 ## Source System CSV File Analysis
 
 ### Data Sources
+
 The source data for this project includes the following CSV files representing different entities:
 
 - `Location`
@@ -151,7 +164,9 @@ The source data for this project includes the following CSV files representing d
 - `Login_Audit`
 
 ### Initial Load & Delta Load
+
 In this project, I’ll demonstrate how to:
+
 1. Handle **initial loads** – when we get the first set of data.
 2. Process **delta loads** – subsequent changes or additions, which is a common pattern in batch processing systems.
 
@@ -159,27 +174,31 @@ For each source, I’ll begin with a handful of records representing both initia
 
 ---
 
-##  Understanding Overall End-to-End Data Architecture
+## Understanding Overall End-to-End Data Architecture
 
 ### Stage Layer
+
 - CSV files from different entities are uploaded to Snowflake using the **file loader** feature.
 - These files are stored in a **stage location**.
 - A **COPY command** is used to load data from the stage into Snowflake tables.
 
 ### Clean Layer
+
 - After loading, the data is moved into the **clean layer**, a schema where:
   - Basic data cleansing
   - Data validation
   - Initial transformations are performed.
 
 ### Consumption Layer
+
 - From the clean layer, data is moved to the **consumption layer**, where:
   - Fact and dimension tables are built.
   - The process starts from the `Location` entity and progresses to the `Order_Items` fact table.
 
 ---
 
-###  Objective of the Architecture
+### Objective of the Architecture
+
 The main goal of this process is to transform raw source data into a structured data platform that supports analytical queries.
 
 - Source data is ingested and goes through a set of transformations.
@@ -190,10 +209,9 @@ The main goal of this process is to transform raw source data into a structured 
 
 <img width="1209" height="768" alt="Objective ERD" src="https://github.com/user-attachments/assets/f44b1fdd-c479-447a-885a-a8c8ba0fcd4a" />
 
-
 ---
 
-##  Points to Remember
+## Points to Remember
 
 - **Dimensional Modeling / Star Schema**
   - Often referred to as the **star schema** in data warehousing.
@@ -205,9 +223,10 @@ The main goal of this process is to transform raw source data into a structured 
 
 ---
 
-###  Notes on Normal Forms (For deeper understanding)
+### Notes on Normal Forms (For deeper understanding)
 
 #### First Normal Form (1NF)
+
 - Each column must contain **atomic (indivisible) values**.
 - There should be **no repeating groups** or arrays within a column.
 - Every row must be **unique** and identifiable by a primary key.
@@ -215,20 +234,21 @@ The main goal of this process is to transform raw source data into a structured 
 **Example:**  
 In the `Customer_Address` table, storing multiple addresses in a single column like this would **violate 1NF**:
 
-| Customer_ID | Address |
-|-------------|-----------------------------|
-| 1           | "Address1, Address2"       |
+| Customer_ID | Address              |
+| ----------- | -------------------- |
+| 1           | "Address1, Address2" |
 
 Instead, it should be split into separate rows:
 
-| Customer_ID | Address      |
-|-------------|--------------|
-| 1           | Address1     |
-| 1           | Address2     |
+| Customer_ID | Address  |
+| ----------- | -------- |
+| 1           | Address1 |
+| 1           | Address2 |
 
 ---
 
 #### Second Normal Form (2NF)
+
 - Builds on 1NF.
 - Ensures that **every non-key column is fully dependent on the entire primary key**, not just part of it.
 - Avoids **partial dependencies** where a column depends only on a part of a composite key.
@@ -242,6 +262,7 @@ Correct approach: Move `Restaurant_Name` to the `Menu` or `Restaurant` dimension
 ---
 
 #### Third Normal Form (3NF)
+
 - Builds on 2NF.
 - Removes **transitive dependencies**, where non-key columns depend indirectly on the primary key through another column.
 - Ensures that **non-key attributes depend only on the primary key**.
@@ -249,46 +270,53 @@ Correct approach: Move `Restaurant_Name` to the `Menu` or `Restaurant` dimension
 **Example:**  
 If the `Customer` table has columns like:
 
-| Customer_ID | Address_ID | City_Name  |
-|-------------|------------|------------|
-| 1           | 101        | New York   |
+| Customer_ID | Address_ID | City_Name |
+| ----------- | ---------- | --------- |
+| 1           | 101        | New York  |
 
 Here, `City_Name` depends on `Address_ID`, which depends on `Customer_ID`. This is a transitive dependency.
 
 Correct approach:
+
 - Move `City_Name` to an `Address` or `Location` table where it depends directly on `Address_ID`.
 
 ---
 
 ### Why It Matters
+
 - Normalization helps to **reduce redundancy**, **improve data integrity**, and **streamline updates**.
 - In data warehouses, we balance normalization with performance and usability - often using **star schemas** where dimension tables are slightly denormalized for query efficiency.
 
 ---
+
 # PART 1:-
+
 ## Setting up the Snowflake Sandbox Environment
 
 In this step, we create a **database sandbox** and all necessary **schemas, file formats, internal stages, tags, and masking policies** to support the end-to-end data pipeline.
 
-
 ### 1 Switch to SYSADMIN Role (SYSADMIN role is used because it has privileges to create warehouses, databases, schemas, and other objects.)
+
 ```sql
 use role sysadmin;
 ```
+
 ### 2 Create Warehouse
+
 ```sql
 create warehouse if not exists adhoc_wh
      comment = 'This is the adhoc-wh'
-     warehouse_size = 'x-small' 
-     auto_resume = true 
-     auto_suspend = 60 
-     enable_query_acceleration = false 
-     warehouse_type = 'standard' 
-     min_cluster_count = 1 
-     max_cluster_count = 1 
+     warehouse_size = 'x-small'
+     auto_resume = true
+     auto_suspend = 60
+     enable_query_acceleration = false
+     warehouse_type = 'standard'
+     min_cluster_count = 1
+     max_cluster_count = 1
      scaling_policy = 'standard'
      initially_suspended = true;
 ```
+
 Warehouse: Compute layer in Snowflake. Needed to execute queries and run ETL processes.
 
 auto_resume / auto_suspend ensures cost optimization.
@@ -296,6 +324,7 @@ auto_resume / auto_suspend ensures cost optimization.
 x-small is sufficient for development/sandbox use.
 
 ### 3 Create Sandbox Database and Schemas
+
 ```sql
 create database if not exists sandbox;
 use database sandbox;
@@ -305,6 +334,7 @@ create schema if not exists clean_sch;
 create schema if not exists consumption_sch;
 create schema if not exists common;
 ```
+
 Database: Logical container for all project objects.
 
 Schemas: Organize objects by purpose:
@@ -318,16 +348,18 @@ Schemas: Organize objects by purpose:
 `common` → shared objects like tags, masking policies, reusable functions.
 
 ### 4 Create File Format for CSV
+
 ```sql
-create file format if not exists stage_sch.csv_file_format 
-        type = 'csv' 
-        compression = 'auto' 
-        field_delimiter = ',' 
-        record_delimiter = '\n' 
-        skip_header = 1 
-        field_optionally_enclosed_by = '\042' 
+create file format if not exists stage_sch.csv_file_format
+        type = 'csv'
+        compression = 'auto'
+        field_delimiter = ','
+        record_delimiter = '\n'
+        skip_header = 1
+        field_optionally_enclosed_by = '\042'
         null_if = ('\\N');
 ```
+
 File format defines how Snowflake reads files in stages.
 
 Important options:
@@ -339,11 +371,13 @@ Important options:
 `null_if = ('\\N')` → interprets \N as NULL.
 
 ### 5 Create Internal Stage
+
 ```sql
 create stage stage_sch.csv_stg
     directory = ( enable = true )
     comment = 'this is the snowflake internal stage';
 ```
+
 Stage: Storage location in Snowflake for your CSV files.
 
 Can be used with COPY INTO commands to load data into tables.
@@ -351,12 +385,14 @@ Can be used with COPY INTO commands to load data into tables.
 directory = true allows organizing files in subfolders.
 
 ### 6 Create Tag Objects
+
 ```sql
-create or replace tag 
-    common.pii_policy_tag 
+create or replace tag
+    common.pii_policy_tag
     allowed_values = ('PII','PRICE','SENSITIVE','EMAIL')
     comment = 'This is PII policy tag object';
 ```
+
 Tag: Metadata label that can be attached to tables or columns.
 
 Used for data governance, classification, and compliance.
@@ -364,35 +400,39 @@ Used for data governance, classification, and compliance.
 Example: Mark sensitive columns like `email` or `phone` as `PII`.
 
 ### 7 Create Masking Policies
+
 ```sql
-create or replace masking policy 
+create or replace masking policy
     common.pii_masking_policy as (pii_text string)
     returns string -> to_varchar('** PII **');
 
-create or replace masking policy 
+create or replace masking policy
     common.email_masking_policy as (email_text string)
     returns string -> to_varchar('** EMAIL **');
 
-create or replace masking policy 
+create or replace masking policy
     common.phone_masking_policy as (phone string)
     returns string -> to_varchar('** Phone **');
 ```
+
 **Masking Policy** controls how sensitive data is displayed.
 
 - It is **applied to columns** to hide actual values for non-privileged users.
 - Helps ensure that sensitive information is not exposed in queries.
 
-###  Examples
+### Examples
+
 - `email_masking_policy` → hides customer email addresses.
 - `phone_masking_policy` → hides customer phone numbers.
 
-###  Purpose
+### Purpose
+
 - Ensures **data privacy** and compliance with regulations like **GDPR**.
 - Works alongside **tags** to help classify and govern sensitive data.
 
 ---
 
-##  Summary of Setup
+## Summary of Setup
 
 - **Warehouse** → Provides compute resources for running queries and ETL processes.
 - **Database + Schemas** → Organizes raw, cleaned, and analytical data into logical containers.
@@ -403,12 +443,14 @@ create or replace masking policy
 
 <img width="1184" height="615" alt="image" src="https://github.com/user-attachments/assets/c3b185d6-b078-40f4-864b-79215687bad7" />
 
-##  Uploading Files with Partitions: Initial Load & Delta Load
+## Uploading Files with Partitions: Initial Load & Delta Load
 
 After uploading the files into the stage location using Snowflake’s file upload feature, I will organize the files based on the type of data load.
 
-###  Types of Data Files
+### Types of Data Files
+
 1. **Initial Load Files**
+
    - Contains the first set of data for each entity.
    - Represents a full snapshot of data at the start.
 
@@ -418,18 +460,21 @@ After uploading the files into the stage location using Snowflake’s file uploa
 
 ---
 
-###  Partitioning in Stage Location
+### Partitioning in Stage Location
+
 To distinguish between initial and delta loads, I will create **two partitions** inside the internal stage:
 
 - `initial/` → For storing initial load files.
 - `delta/` → For storing incremental or delta files.
 
 This structure helps in:
+
 - Easily managing and identifying the type of data.
 - Running separate `COPY INTO` commands as per load type.
 - Simulating real-world batch processing pipelines where data comes in chunks.
 
-###  Example Stage Structure
+### Example Stage Structure
+
 @stage_sch.csv_stg/
 
 ├── initial/
@@ -448,33 +493,39 @@ This structure helps in:
 
 └── ...
 
-###  Notes
+### Notes
+
 - Using partitions mimics how files are organized in cloud storage like AWS S3 or Azure Blob Storage.
 - It provides a scalable and structured way to manage multiple data versions.
 - This setup allows the pipeline to process full and incremental datasets independently while maintaining a clean workflow.
 
-
 ### Reference Images of data loading into snowflake stage
-## 1 
+
+## 1
+
 <img width="1350" height="657" alt="image" src="https://github.com/user-attachments/assets/34096b23-f4ea-43a0-9324-8fab35763925" />
 After clicking the "+ Files"
 
-## 2 
+## 2
+
 <img width="1144" height="666" alt="image" src="https://github.com/user-attachments/assets/9fa57606-4c96-406a-8dc3-76da68a99c6f" />
 - Check "Select database, schema abd stage"  
 - Goto "Browse" and upload the files"
 
-## 3 
+## 3
+
 <img width="666" height="549" alt="image" src="https://github.com/user-attachments/assets/73a3a538-c960-4651-b989-639b5fb3736f" />
 
 - Specify the path "initial", where the initial load files will be loaded.
 
-## 4 
+## 4
+
 <img width="701" height="615" alt="image" src="https://github.com/user-attachments/assets/64eee676-46ce-4df6-9915-c2da71cee84b" />
 
 - Click "Upload" in the right side lower corner
 
-## 5 
+## 5
+
 <img width="691" height="655" alt="image" src="https://github.com/user-attachments/assets/abcfa81d-c5b6-4bc4-ac41-3a4bf53e3d36" />
 
 - Same steps for Delta loads, into the "Delta" path
@@ -482,18 +533,21 @@ After clicking the "+ Files"
 ## Follow the same uploading steps for Initial and Delta loads of each entities.
 
 ## Initial Loads for all the entities:
+
 <img width="1346" height="628" alt="image" src="https://github.com/user-attachments/assets/960ee676-8432-4517-83ef-9444276b3c40" />
 
 ## Delta Loads for all the entities:
+
 <img width="1351" height="661" alt="image" src="https://github.com/user-attachments/assets/81c38f73-9295-42ca-bfd1-2d4bc2ec4d59" />
 
 ---
 
-##  Loading Data from Stage (`csv_stg`) into Tables
+## Loading Data from Stage (`csv_stg`) into Tables
 
 After uploading all the files into the `initial/` and `delta/` folders under `CSV_STG`, I will proceed with loading them into the respective tables using the `COPY INTO` command.
 
-###  File Reference Pattern
+### File Reference Pattern
+
 The files in the stage will be referenced using the following pattern:
 
 `@stage_sch.csv_stg/{initial|delta}/{entity_name}/{file_name}.csv`
@@ -508,7 +562,6 @@ For example:
 
 This structure helps keep the data organized and easy to manage during ingestion.
 
-
 ### Verifying Files in Stage
 
 - After loading the files into the stage, I will verify them by running the following command:
@@ -516,6 +569,7 @@ This structure helps keep the data organized and easy to manage during ingestion
 ```sql
 list @stage_sch.csv_stg;
 ```
+
 - SQL command to check the data in stage location
 
 ```sql
@@ -532,6 +586,7 @@ from @stage_sch.csv_stg/initial/location
 ```
 
 ## Verifying if the files are successfully uploaded in the stage location (image):
+
 <img width="1348" height="621" alt="image" src="https://github.com/user-attachments/assets/23f867be-4392-4428-a81e-18612685a470" />
 
 ## Creating Tables and Loading Data
@@ -599,21 +654,26 @@ metadata$file_content_key as _stg_file_md5,
 current_timestamp as _copy_data_ts
 ---
 ```
+
 ## ✅ Explanation of Each Audit Column
 
 ### `_stg_file_name (metadata$filename)`
+
 - Captures the name of the file from which this record is loaded.
 - ✅ Helps trace the source of the data and identify the batch file used during the load.
 
 ### `_stg_file_load_ts (metadata$file_last_modified)`
+
 - Captures the timestamp when the file was last modified before loading.
 - ✅ Useful to know the freshness of the data and whether it’s the latest version.
 
 ### `_stg_file_md5 (metadata$file_content_key)`
+
 - Captures the MD5 checksum value of the file content.
 - ✅ Helps verify the integrity of the file and ensure that data wasn’t tampered with during transfer.
 
 ### `_copy_data_ts (current_timestamp)`
+
 - Captures the timestamp when the data was loaded into the table.
 - ✅ Helps track when the data entered the system and supports troubleshooting and audits.
 
@@ -629,7 +689,6 @@ current_timestamp as _copy_data_ts
 ---
 
 This approach ensures that every record in the `Location` table is not just raw data but enriched with metadata that helps maintain a reliable and auditable data pipeline.
-
 
 So far, I have moved the data from the **stage location** into the `Location` table inside the **stage schema**. While loading this data, I have also created a **Stream object** to capture changes (CDC – Change Data Capture).
 
@@ -663,10 +722,12 @@ So far, I have moved the data from the **stage location** into the `Location` ta
 A **hash key** is a unique identifier generated by applying a hashing function to one or more columns in the data.
 
 #### ➤ How it works:
+
 - A hashing function (such as MD5 or SHA-256) takes input data (for example, `location_name`, `city`, `state`) and produces a fixed-length unique value.
 - Even small changes in the input data will result in a different hash, making it useful for tracking changes.
 
 #### ➤ Why use a hash key in dimension tables:
+
 - ✅ **Uniqueness**: Ensures that each record in the dimension table is uniquely identifiable.
 - ✅ **Change tracking**: Helps identify updates in records when input attributes change.
 - ✅ **Data integrity**: Avoids accidental duplicates and maintains consistency.
@@ -674,9 +735,11 @@ A **hash key** is a unique identifier generated by applying a hashing function t
 - ✅ **Surrogate key alternative**: Instead of using a sequential ID, a hash key can serve as a natural unique key derived from actual data attributes.
 
 #### ➤ Example:
+
 ```sql
 md5(location_name || city || state) as location_hash_key
 ```
+
 - This generates a hash based on the combined values of `location_name`, `city`, and `state`.
 
 - Any change in these fields will create a new hash, allowing the system to detect and process changes efficiently.
@@ -728,7 +791,7 @@ create or replace table clean_sch.restaurant_location (
     active_flag string(10) not null,
     created_ts timestamp_tz not null,
     modified_ts timestamp_tz,
-    
+
     -- additional audit columns
     _stg_file_name string,
     _stg_file_load_ts timestamp_ntz,
@@ -737,11 +800,13 @@ create or replace table clean_sch.restaurant_location (
 )
 comment = 'Location entity under clean schema with appropriate data type under clean schema layer, data is populated using merge statement from the stage layer location table. This table does not support SCD2';
 ```
+
 While creating the `restaurant_location` table in the **clean schema**, I added some additional columns to enrich the location data and ensure better tracking and usability.
 
 ---
 
 ### ✅ Additional Columns in `restaurant_location`
+
 ```sql
  is_union_territory boolean not null default false,
     capital_city_flag boolean not null default false,
@@ -750,13 +815,14 @@ While creating the `restaurant_location` table in the **clean schema**, I added 
     active_flag string(10) not null,
     created_ts timestamp_tz not null,
     modified_ts timestamp_tz,
-    
+
     -- additional audit columns
     _stg_file_name string,
     _stg_file_load_ts timestamp_ntz,
     _stg_file_md5 string,
     _copy_data_ts timestamp_ntz default current_timestamp
 ```
+
 ### ➤ Explanation
 
 - **`is_union_territory`** → Indicates whether the location is a union territory.
@@ -791,8 +857,8 @@ These columns help in providing additional context and classification for locati
 - The merge operation ensures that new records are inserted, and existing ones are updated appropriately.
 - During this process, additional data enrichment is performed using `CASE` statements.
 
-
 Example of State Code Enrichment:
+
 ```sql
 CASE
     WHEN State = 'Delhi' THEN 'DL'
@@ -803,6 +869,7 @@ CASE
     -- Add more cases as needed
 END AS state_code
 ```
+
 - This logic adds a new column called `state_code`, which standardizes state names into abbreviated codes for easier reference and reporting.
 
 ## ✅ Summary
@@ -813,12 +880,14 @@ END AS state_code
 - A merge operation loads and enriches data efficiently using transformations like `CASE` statements for state codes.
 - These steps ensure that the location data is reliable, consistent, and ready for analytical use.
 
- **`is_union_territory`**  
-   - Any state that matches India’s union territory names will be flagged as `TRUE`; otherwise `FALSE`.
+  **`is_union_territory`**
 
- **`capital_city_flag`**  
-   - Indicates whether the location is a capital city based on specific state-city combinations.  
-   - Example `CASE` statement logic:
+  - Any state that matches India’s union territory names will be flagged as `TRUE`; otherwise `FALSE`.
+
+  **`capital_city_flag`**
+
+  - Indicates whether the location is a capital city based on specific state-city combinations.
+  - Example `CASE` statement logic:
 
 ```sql
 CASE
@@ -829,11 +898,12 @@ CASE
     -- Add more state-city combinations as needed
 END AS capital_city_flag
 ```
+
 ## ✅ Merge Operation Logic
 
 The merge operation ensures **incremental updates and inserts**:
 
-- **Update:** If `Location_ID` in the clean schema matches the `Location_ID` in the source (stage) table and any changes are detected, the existing record will be updated.  
+- **Update:** If `Location_ID` in the clean schema matches the `Location_ID` in the source (stage) table and any changes are detected, the existing record will be updated.
 - **Insert:** If a new `Location_ID` appears in the source, a new record will be inserted into the clean table.
 
 This approach ensures that the clean schema always reflects the latest state of the source data while maintaining historical consistency.
@@ -842,8 +912,8 @@ This approach ensures that the clean schema always reflects the latest state of 
 
 ## ✅ Summary
 
-- Additional columns like `is_union_territory` and `capital_city_flag` add more context to the location data.  
-- The merge operation efficiently handles both updates and inserts based on the source stream.  
+- Additional columns like `is_union_territory` and `capital_city_flag` add more context to the location data.
+- The merge operation efficiently handles both updates and inserts based on the source stream.
 - This ensures the `restaurant_location` table in the clean schema is always accurate, enriched, and ready for downstream analytical use.
 
 ## after running the merge statement
@@ -854,70 +924,74 @@ This approach ensures that the clean schema always reflects the latest state of 
 
 ## 📥 Creating Location Dimension Table in Consumption Schema
 
-The next step is to create the **`RESTAURANT_LOCATION_DIM`** table in the **consumption schema**.  
+The next step is to create the **`RESTAURANT_LOCATION_DIM`** table in the **consumption schema**.
 
-- This table will take data from the **stream object of the clean schema**.  
-- The **primary key** is `restaurant_location_hk` (hash key) that uniquely identifies each record.  
-- To track **Slowly Changing Dimensions (SCD)**, the table includes the following columns:  
-  - `eff_start_dt` → Effective start date of the record  
-  - `eff_end_dt` → Effective end date of the record  
-  - `current_flag` → Indicates whether the record is the current version  
+- This table will take data from the **stream object of the clean schema**.
+- The **primary key** is `restaurant_location_hk` (hash key) that uniquely identifies each record.
+- To track **Slowly Changing Dimensions (SCD)**, the table includes the following columns:
+  - `eff_start_dt` → Effective start date of the record
+  - `eff_end_dt` → Effective end date of the record
+  - `current_flag` → Indicates whether the record is the current version
 
 ---
 
 ### ✅ What is Slowly Changing Dimension (SCD)?
 
-SCD is a technique in data warehousing used to manage **changes in dimension data over time**.  
+SCD is a technique in data warehousing used to manage **changes in dimension data over time**.
 
 #### ➤ Types of SCD
 
-1. **SCD Type 0 – Fixed**  
-   - No changes are tracked; original values remain the same.  
-   - ✅ Use case: Historical values should never change, e.g., Social Security Number.  
+1. **SCD Type 0 – Fixed**
 
-2. **SCD Type 1 – Overwrite**  
-   - Existing values are **overwritten** with the new values.  
-   - ✅ Use case: Correcting errors or updating non-historic fields, e.g., phone number correction.  
+   - No changes are tracked; original values remain the same.
+   - ✅ Use case: Historical values should never change, e.g., Social Security Number.
 
-3. **SCD Type 2 – Add New Row**  
-   - When a change occurs, a **new row** is inserted with the updated values.  
-   - Old row is marked with `eff_end_dt` and `current_flag = FALSE`.  
-   - ✅ Use case: Track history of dimension data changes, e.g., customer address or city change.  
+2. **SCD Type 1 – Overwrite**
 
-4. **SCD Type 3 – Add New Column**  
-   - Only selected historical attributes are tracked in **new columns**.  
-   - ✅ Use case: Keep previous value alongside the current value, e.g., last subscription type.  
+   - Existing values are **overwritten** with the new values.
+   - ✅ Use case: Correcting errors or updating non-historic fields, e.g., phone number correction.
 
-5. **Hybrid / Other Types (Type 4, 6, etc.)**  
-   - Combine strategies for specific business needs.  
+3. **SCD Type 2 – Add New Row**
+
+   - When a change occurs, a **new row** is inserted with the updated values.
+   - Old row is marked with `eff_end_dt` and `current_flag = FALSE`.
+   - ✅ Use case: Track history of dimension data changes, e.g., customer address or city change.
+
+4. **SCD Type 3 – Add New Column**
+
+   - Only selected historical attributes are tracked in **new columns**.
+   - ✅ Use case: Keep previous value alongside the current value, e.g., last subscription type.
+
+5. **Hybrid / Other Types (Type 4, 6, etc.)**
+   - Combine strategies for specific business needs.
 
 ---
 
 ### ✅ Usage in This Project
 
-- The `RESTAURANT_LOCATION_DIM` table uses **SCD Type 2**:  
-  - `eff_start_dt` marks when this version of the record became effective.  
-  - `eff_end_dt` marks when it was superseded by a new version.  
-  - `current_flag` indicates whether the row is the latest/current version.  
+- The `RESTAURANT_LOCATION_DIM` table uses **SCD Type 2**:
+  - `eff_start_dt` marks when this version of the record became effective.
+  - `eff_end_dt` marks when it was superseded by a new version.
+  - `current_flag` indicates whether the row is the latest/current version.
 - This allows us to **track historical changes** in locations while maintaining a single source of truth for analytics.
 
 ---
 
 ### ✅ Merge Operation
 
-- The **second merge** operation will take data from the **clean schema’s stream object** and load/update the `RESTAURANT_LOCATION_DIM` table in the **consumption schema**.  
-- New location records are **inserted** with `current_flag = TRUE`.  
-- Updates to existing locations create a **new row** with the new `eff_start_dt` and the old row’s `current_flag` is set to `FALSE` and `eff_end_dt` is updated.  
+- The **second merge** operation will take data from the **clean schema’s stream object** and load/update the `RESTAURANT_LOCATION_DIM` table in the **consumption schema**.
+- New location records are **inserted** with `current_flag = TRUE`.
+- Updates to existing locations create a **new row** with the new `eff_start_dt` and the old row’s `current_flag` is set to `FALSE` and `eff_end_dt` is updated.
 - This ensures that historical changes in location data are preserved for reporting and analytics.
 
 <img width="1356" height="642" alt="image" src="https://github.com/user-attachments/assets/9e91dbca-6597-4fc7-bb6d-ba004a7e202d" />
 
 ## ✅ Repeating the Process for Other Entities
 
-The same process will be applied to all other entities in the project.  
+The same process will be applied to all other entities in the project.
 
-- Each entity’s data will be loaded from the **stage schema**, processed in the **clean schema**, and finally stored in the **consumption schema** as dimension or fact tables.  
-- Stream objects and merge operations will be used at each step to capture changes, ensure data integrity, and support incremental updates.  
+- Each entity’s data will be loaded from the **stage schema**, processed in the **clean schema**, and finally stored in the **consumption schema** as dimension or fact tables.
+- Stream objects and merge operations will be used at each step to capture changes, ensure data integrity, and support incremental updates.
 - Slowly Changing Dimensions (SCD Type 2) will be implemented where historical tracking is required.
 
 This structured approach ensures consistency, scalability, and reliability across the entire data pipeline.
@@ -951,22 +1025,23 @@ By re-running the merge, the data pipeline stays updated with the latest changes
 
 The architecture of this project ensures a smooth flow of data from the source to the final analytical models:
 
-1. **Source → Stage Layer (stage schema):**  
+1. **Source → Stage Layer (stage schema):**
+
    - Data from CSV files is loaded into the stage schema using Snowflake’s file upload feature.
    - A stream object captures changes in this layer and passes them to the next stage.
 
-2. **Stage → Clean Layer (clean schema):**  
+2. **Stage → Clean Layer (clean schema):**
+
    - The data is processed, transformed, and enriched in the clean schema.
    - Additional columns and audit fields are added to enhance data context.
    - A stream object here captures changes to be forwarded to the final layer.
 
-3. **Clean → Consumption Layer (consumption schema):**  
+3. **Clean → Consumption Layer (consumption schema):**
    - The data is loaded into the dimension table (`RESTAURANT_LOCATION_DIM`) using a second merge operation.
    - Slowly Changing Dimension (SCD Type 2) logic is applied to track historical changes efficiently.
 
 This architecture allows for incremental data loading, real-time change tracking, and robust historical data management.  
 The **Location entity part** of the project is now complete, with data flowing seamlessly across schemas and transformations ensuring integrity and consistency.
-
 
 ## 🍽️ Restaurant Entity Data Processing
 
@@ -974,18 +1049,22 @@ Next, I will work on another master dataset called **Restaurant Entity**.
 The goal is to process and transform this master data into a **Restaurant Dimension** in the **consumption schema**.
 
 ### 🔹 Objective
+
 - Convert the raw restaurant master data into a dimension table.
 - Create a **hash key** (`restaurant_hk`) as the primary key.
 - Include `restaurant_id` and all other restaurant-related attributes.
 
 ### 🔹 Data Load
+
 - **Initial Load:** 5 records in the restaurant master dataset.
 - **Delta Load:** 2 delta load files to be processed incrementally.
 
 ### 🔹 Processing Pattern
+
 The same processing pattern used for the **Location Entity** will be applied here:
-1. **Stage Schema:** Load raw restaurant master data.  
-2. **Clean Schema:** Apply transformations, enrich the dataset, and add audit columns.  
+
+1. **Stage Schema:** Load raw restaurant master data.
+2. **Clean Schema:** Apply transformations, enrich the dataset, and add audit columns.
 3. **Consumption Schema:** Use a merge operation to load data into the `RESTAURANT_DIM` table, applying **SCD Type 2** for historical tracking.
 
 This ensures the **Restaurant Dimension** always has accurate, enriched, and historically traceable records.
@@ -994,26 +1073,29 @@ This ensures the **Restaurant Dimension** always has accurate, enriched, and his
 
 ### 🔑 Points to Remember
 
-- Every data project that deals with large data volumes usually starts with an **initial load** (first-time load).  
-  - Example: In the Restaurant Entity, the first-time load included **5 rows**.  
+- Every data project that deals with large data volumes usually starts with an **initial load** (first-time load).
 
-- After the initial load, any **new or updated data** is processed as **delta processing** (incremental load).  
-  - Example: In the Restaurant Entity, **2 new files** (containing new records) were captured and processed as part of the **delta load**.  
+  - Example: In the Restaurant Entity, the first-time load included **5 rows**.
+
+- After the initial load, any **new or updated data** is processed as **delta processing** (incremental load).
+
+  - Example: In the Restaurant Entity, **2 new files** (containing new records) were captured and processed as part of the **delta load**.
 
 - This approach ensures that the system efficiently handles data growth while maintaining accuracy and historical tracking.
 
+- **Batch Processing**
 
-- **Batch Processing**  
-  - Delta data is processed once per day (or less frequently).  
-  - Common in **enterprise data warehouses (EDW)** where daily loads are sufficient.  
+  - Delta data is processed once per day (or less frequently).
+  - Common in **enterprise data warehouses (EDW)** where daily loads are sufficient.
 
-- **Micro-Batching**  
-  - Data is processed at smaller intervals, such as **every hour** or **every 15 minutes**.  
-  - Balances between **near real-time availability** and **system efficiency**.  
+- **Micro-Batching**
 
-- **Real-Time Streaming**  
-  - Every change from the source is captured and pushed immediately to the warehouse using **Change Data Capture (CDC)**.  
-  - Ensures data is always up to date, commonly used in **event-driven systems** (e.g., fraud detection, IoT, or live dashboards).  
+  - Data is processed at smaller intervals, such as **every hour** or **every 15 minutes**.
+  - Balances between **near real-time availability** and **system efficiency**.
+
+- **Real-Time Streaming**
+  - Every change from the source is captured and pushed immediately to the warehouse using **Change Data Capture (CDC)**.
+  - Ensures data is always up to date, commonly used in **event-driven systems** (e.g., fraud detection, IoT, or live dashboards).
 
 ✅ Choosing the right strategy depends on the **business requirement**, **data volume**, and **latency tolerance** of the system.
 
@@ -1025,43 +1107,44 @@ The objective is to transform this source customer data into a **Customer Dimens
 ### 🔹 Steps Involved
 
 1. **Initial Load**
+
    - Load the raw customer data into the **stage schema**.
    - Apply basic transformations (casting, cleaning, standardization).
    - Capture changes using a **stream object**.
 
 2. **Load into Clean Schema**
-   - Create the **restaurant_customer** table in the clean schema.  
+
+   - Create the **restaurant_customer** table in the clean schema.
    - Add additional columns such as:
-     - `customer_surrogate_key` (auto-incremented PK for uniqueness)  
-     - `active_flag` (Y/N)  
-     - `created_ts` / `modified_ts`  
+     - `customer_surrogate_key` (auto-incremented PK for uniqueness)
+     - `active_flag` (Y/N)
+     - `created_ts` / `modified_ts`
    - Use a **merge operation** to handle updates (changed customer info) and inserts (new customers).
 
 3. **Load into Consumption Schema (Dimension Table)**
-   - Target table: `CUSTOMER_DIM` in the consumption schema.  
+
+   - Target table: `CUSTOMER_DIM` in the consumption schema.
    - This will include:
-     - `customer_hk` (hash key for uniqueness)  
-     - Customer demographics and attributes (name, city, contact details, etc.)  
+     - `customer_hk` (hash key for uniqueness)
+     - Customer demographics and attributes (name, city, contact details, etc.)
      - SCD2 tracking fields:
        - `eff_start_dt`
        - `eff_end_dt`
        - `is_current` (Flag to indicate the current record)
 
 4. **Delta / Incremental Loads**
-   - Streams capture newly inserted or updated customers.  
+   - Streams capture newly inserted or updated customers.
    - Re-run merge statements to:
-     - Insert new customers into the clean and consumption layers.  
+     - Insert new customers into the clean and consumption layers.
      - Update existing customer records with SCD2 logic.
-
 
 <img width="1275" height="613" alt="image" src="https://github.com/user-attachments/assets/b671a153-a578-4370-a713-b844b35dc04f" />
 
-
 ### ✅ Summary
 
-- **Stage → Clean → Consumption** pipeline is followed consistently.  
-- Customer dimension supports **SCD2**, enabling historical tracking of customer profile changes.  
-- Delta loads ensure the system is always up to date while preserving history.  
+- **Stage → Clean → Consumption** pipeline is followed consistently.
+- Customer dimension supports **SCD2**, enabling historical tracking of customer profile changes.
+- Delta loads ensure the system is always up to date while preserving history.
 - This approach provides a **robust and analytics-ready customer dataset**.
 
 ## 🔄 Applying the Same Pattern to Other Entities
@@ -1069,22 +1152,24 @@ The objective is to transform this source customer data into a **Customer Dimens
 Just like **Location, Restaurant, Customer, and Customer Address**,  
 the same data flow is applied to all other entities:
 
-1. **Stage Schema** → Initial & Delta files are staged.  
-2. **Clean Schema** → Data is standardized, enriched, and surrogate keys are added.  
-   - Merge operation ensures inserts/updates.  
-   - Streams track incremental changes.  
-3. **Consumption Schema** → Dimension tables are built with hash keys and SCD2 logic.  
-   - eff_start_dt, eff_end_dt, current_flag manage historical changes.  
+1. **Stage Schema** → Initial & Delta files are staged.
+2. **Clean Schema** → Data is standardized, enriched, and surrogate keys are added.
+   - Merge operation ensures inserts/updates.
+   - Streams track incremental changes.
+3. **Consumption Schema** → Dimension tables are built with hash keys and SCD2 logic.
+   - eff_start_dt, eff_end_dt, current_flag manage historical changes.
 
-This pattern is consistently followed for:  
-- **Menu**  
-- **Delivery Agent**  
-- **Orders**  
-- **Order Items**  
-- **Delivery**  
+This pattern is consistently followed for:
+
+- **Menu**
+- **Delivery Agent**
+- **Orders**
+- **Order Items**
+- **Delivery**
 - **Login Audit**
 
 ---
+
 ## 📊 Fact Table Population
 
 Now that the **dimension tables** are ready in the **consumption schema**  
@@ -1096,60 +1181,68 @@ it’s time to move on to the **transaction entities**:
 - **Order Items**
 
 ### 🔎 Granularity of a Fact Table
+
 Granularity means the **level of detail** captured in a fact table.  
-It answers the question: *“What does one row in this fact table represent?”*  
+It answers the question: _“What does one row in this fact table represent?”_
 
 For this project:
+
 - If we set **granularity = Order**, each row would represent a whole order (summary level).
 - If we set **granularity = Order Item**, each row represents an individual item within an order (fine-grained level).
 
 ✅ We choose **Order Item granularity**, because:
-- It provides the most detailed view of transactions.  
-- From here, you can always aggregate upwards (to order level, customer level, restaurant level, etc.).  
-- It avoids losing important details (like multiple items within the same order).  
+
+- It provides the most detailed view of transactions.
+- From here, you can always aggregate upwards (to order level, customer level, restaurant level, etc.).
+- It avoids losing important details (like multiple items within the same order).
 
 ### 📌 Why Only One Fact Table (Order Item Fact)?
+
 Even though we have three transaction entities (**Delivery, Orders, Order Items**),  
 we create **one single fact table** at the **Order Item** level because:
-- **Order Item Fact** already captures the lowest granularity.  
-- Delivery and Orders can be linked through **foreign keys/dimensions**.  
-- Storing multiple fact tables at different granularities would duplicate data and cause inconsistencies.  
+
+- **Order Item Fact** already captures the lowest granularity.
+- Delivery and Orders can be linked through **foreign keys/dimensions**.
+- Storing multiple fact tables at different granularities would duplicate data and cause inconsistencies.
 - The single fact can be used to roll up or join with dimensions to answer all analytics questions:
   - Total sales by restaurant
   - Number of deliveries by city
   - Revenue by customer segment
-  - Order trends over time  
+  - Order trends over time
 
 In short:  
-➡ **Order Item Fact** is chosen because it is the most granular, flexible, and avoids redundancy.  
+➡ **Order Item Fact** is chosen because it is the most granular, flexible, and avoids redundancy.
 
 ### 📅 Date Dimension
-Before creating the fact table, we also build a **Date Dimension**.  
 
-Every data warehouse project needs a **Date Dimension (date_dim)** table.  
+Before creating the fact table, we also build a **Date Dimension**.
 
-I will start with a **minimum order date**:  
-- First, get the order date from the `order` table.  
-- Take the minimum of that date.  
+Every data warehouse project needs a **Date Dimension (date_dim)** table.
+
+I will start with a **minimum order date**:
+
+- First, get the order date from the `order` table.
+- Take the minimum of that date.
 - From there, use a **Common Table Expression (CTE)** approach to create the dimension table.
 
-In this **date_dim table**, I will have:  
-- `date_dim_hk` → NUMBER (Primary Key)  
-- `calendar_date` → DATE (Unique)  
-- Other **date-related columns** such as day, month, quarter, year, weekend flag, etc.  
+In this **date_dim table**, I will have:
 
-In the **INSERT statement**:  
-- It first takes the minimum value from the `order` table.  
-- Once it gets this one, it **recursively follows the approach** to generate all dates for the date dimension.  
-  
+- `date_dim_hk` → NUMBER (Primary Key)
+- `calendar_date` → DATE (Unique)
+- Other **date-related columns** such as day, month, quarter, year, weekend flag, etc.
+
+In the **INSERT statement**:
+
+- It first takes the minimum value from the `order` table.
+- Once it gets this one, it **recursively follows the approach** to generate all dates for the date dimension.
 
 ✅ The Date Dimension is essential for time-based reporting in BI tools.
 
+✅ By applying this uniform design, the project ensures:
 
-✅ By applying this uniform design, the project ensures:  
-- Data consistency across layers  
-- Scalable handling of initial and delta loads  
-- Full support for Slowly Changing Dimensions (SCD2)  
+- Data consistency across layers
+- Scalable handling of initial and delta loads
+- Full support for Slowly Changing Dimensions (SCD2)
 - Robust pipelines ready for analytics and reporting
 
 ## ⭐ Star Schema Design
@@ -1157,6 +1250,7 @@ In the **INSERT statement**:
 The data warehouse follows a **Star Schema** model with a central fact table (`ORDER_ITEM_FACT`) connected to multiple dimension tables.
 
 ### 📊 Fact Table
+
 # Order Item Fact
 
 ## Table Creation
@@ -1179,15 +1273,16 @@ The **Order Item Fact** table is created as the central fact table with the foll
 - **Estimated Time**
 
 ### Why Surrogate Key (SK)?
-- **Not PK because:** The `order_item_id` from the source is already a natural primary key.  
+
+- **Not PK because:** The `order_item_id` from the source is already a natural primary key.
 - **Usage of SK:** Provides consistency across DW, handles SCD changes, avoids dependency on source system keys.
 
 ---
 
 ## Merge Operation
 
-- **Update:** If a matching record exists and changes are detected → update the fact row.  
-- **Insert:** If the record is new → insert into the fact table.  
+- **Update:** If a matching record exists and changes are detected → update the fact row.
+- **Insert:** If the record is new → insert into the fact table.
 - **Join:** Merge statement connects the fact table with all related dimension tables using foreign keys.
 
 ---
@@ -1232,6 +1327,7 @@ ALTER TABLE consumption_sch.order_item_fact
     FOREIGN KEY (order_date_dim_key)
     REFERENCES consumption_sch.date_dim (date_dim_hk);
 ```
+
 ## Short Explanation of Constraints
 
 Each `ALTER TABLE` adds a **foreign key** to maintain referential integrity.
@@ -1244,49 +1340,55 @@ This ensures that:
 
 This enforces **data consistency** and keeps the **star schema relationships intact**.
 
-
 ### 📐 Dimension Tables
-- **CUSTOMER_DIM** → Customer details.  
-- **CUSTOMER_ADDRESS_DIM** → Detailed address (SCD Type 2).  
-- **MENU_DIM** → Menu items (name, price, category, availability).  
-- **RESTAURANT_DIM** → Restaurant master data.  
-- **RESTAURANT_LOCATION_DIM** → Restaurant location details (city, state, zip, region).  
-- **DELIVERY_AGENT_DIM** → Delivery agent details (SCD Type 2).  
-- **DATE_DIM** → Calendar and time attributes for trend analysis.  
+
+- **CUSTOMER_DIM** → Customer details.
+- **CUSTOMER_ADDRESS_DIM** → Detailed address (SCD Type 2).
+- **MENU_DIM** → Menu items (name, price, category, availability).
+- **RESTAURANT_DIM** → Restaurant master data.
+- **RESTAURANT_LOCATION_DIM** → Restaurant location details (city, state, zip, region).
+- **DELIVERY_AGENT_DIM** → Delivery agent details (SCD Type 2).
+- **DATE_DIM** → Calendar and time attributes for trend analysis.
 
 ### 🔗 How It Works
-- `ORDER_ITEM_FACT` connects with all dimension tables through foreign keys.  
+
+- `ORDER_ITEM_FACT` connects with all dimension tables through foreign keys.
 - This allows business questions like:
-  - Total sales by restaurant and city.  
-  - Order trends by customer and month.  
-  - Performance tracking of delivery agents.  
+  - Total sales by restaurant and city.
+  - Order trends by customer and month.
+  - Performance tracking of delivery agents.
 
 ---
+
 ## KPI Views
 
 After creating the fact and dimension tables, I will define KPI views to analyze revenue at different levels of granularity.  
 These views make it easier for business users and analysts to query summarized data without directly accessing complex fact and dimension tables.
 
 ### 1. Annual Revenue View → `vw_yearly_revenue_kpis`
-- **Purpose:** Provides total revenue grouped by year.  
+
+- **Purpose:** Provides total revenue grouped by year.
 - **Significance:** Helps management track long-term growth trends, compare performance year-over-year, and evaluate strategic goals.
 
 ### 2. Monthly Revenue View → `vw_monthly_revenue_kpis`
-- **Purpose:** Provides total revenue grouped by year and month.  
+
+- **Purpose:** Provides total revenue grouped by year and month.
 - **Significance:** Useful for identifying **seasonal patterns**, monthly growth, and short-term business performance.  
   For example, spikes during festivals or holidays can be analyzed.
 
 ### 3. Daily Revenue View → `vw_daily_revenue_kpis`
-- **Purpose:** Provides total revenue grouped by each calendar date.  
+
+- **Purpose:** Provides total revenue grouped by each calendar date.
 - **Significance:** Helps in **day-to-day monitoring** of sales, detecting anomalies, and supporting operational decision-making.  
   Example: sudden drops in daily revenue can alert teams to investigate potential issues quickly.
 
 ---
 
 ### Why KPI Views?
-- They **abstract complexity**: business teams don’t need to join multiple tables.  
-- They provide **ready-made metrics**: revenue is pre-calculated at required levels.  
-- They support **dashboards and BI tools** (like Power BI or Tableau) directly, improving performance and usability.  
+
+- They **abstract complexity**: business teams don’t need to join multiple tables.
+- They provide **ready-made metrics**: revenue is pre-calculated at required levels.
+- They support **dashboards and BI tools** (like Power BI or Tableau) directly, improving performance and usability.
 
 ---
 
@@ -1295,6 +1397,7 @@ These views make it easier for business users and analysts to query summarized d
 ## Data Pipeline Automation (Part 2)
 
 ### Overview
+
 In real production applications, data pipelines ensure that as soon as new data lands in the staging area (internal or external), it automatically flows through multiple layers:
 
 **Stage → Clean → Consumption → Dashboard/Reporting**
@@ -1309,7 +1412,9 @@ In this project, the objective is to ensure that the **latest data reaches the `
 ---
 
 ## Challenges with Manual Scripts
+
 Until now, the worksheets contained both:
+
 - **DDL statements** (object creation: tables, streams, etc.)
 - **DML statements** (data load, merges, transformations)
 
@@ -1317,10 +1422,10 @@ For this project, I created around **35–40 database objects** inside:
 
 sandbox → stage_sch → clean_sch → consumption_sch → common_sch
 
-
 At production scale (like a food aggregator such as Swiggy), this could mean **hundreds of tables and thousands of columns**—making raw worksheets **hard to maintain**.
 
 **Solution:**
+
 - Separate **DDL** and **DML**
 - Wrap **DML logic into Stored Procedures (SPs)**
 - Orchestrate SPs with **Parent SP + Tasks**
@@ -1330,6 +1435,7 @@ At production scale (like a food aggregator such as Swiggy), this could mean **h
 ## Approach
 
 ### 1. Stage Schema (Copy Commands)
+
 - Each **COPY command** for loading data into Stage tables is wrapped inside a **Stored Procedure (SP)**.
 - All SPs are called by a **Parent SP** (Orchestrating SP).
 - Execution is **sequential**:  
@@ -1338,6 +1444,7 @@ At production scale (like a food aggregator such as Swiggy), this could mean **h
 ---
 
 ### 2. Clean Schema (Merge Operations)
+
 - Data from Stage is moved to Clean schema using **MERGE operations**.
 - Each entity’s MERGE statement is wrapped in its own SP.
 - All SPs are then orchestrated with a **Parent SP**.
@@ -1345,52 +1452,61 @@ At production scale (like a food aggregator such as Swiggy), this could mean **h
 ---
 
 ### 3. Consumption Schema (Final Merge)
+
 - Data is then merged from Clean → Consumption schema into **dimension tables** (`dim_location`, `dim_customer`, etc.).
 - Similar approach as step 2: SPs per entity + Parent SP for orchestration.
 
 ---
 
 ### 4. Orchestration with Tasks
+
 - A **Task object** invokes the Parent SP.
 - Ensures **end-to-end automation** of the pipeline.
 
 ---
 
 ## Summary
-- ✅ DML wrapped in Stored Procedures  
-- ✅ Sequential orchestration using Parent SPs  
-- ✅ Task scheduled for automation  
-- ✅ End-to-end pipeline: **Stage → Clean → Consumption → Fact tables → Dashboard**  
+
+- ✅ DML wrapped in Stored Procedures
+- ✅ Sequential orchestration using Parent SPs
+- ✅ Task scheduled for automation
+- ✅ End-to-end pipeline: **Stage → Clean → Consumption → Fact tables → Dashboard**
 
 This approach makes the project **scalable, automated, and closer to production-grade**.
 
 # Initial Setup (Sandbox & Security)
 
 ## 1. Role and Warehouse
+
 - The development work is done using the **SYSADMIN role** and a dedicated **warehouse** for processing.
 
 ## 2. Database and Schemas
-- A **sandbox database** is created to keep development activities isolated.  
+
+- A **sandbox database** is created to keep development activities isolated.
 - Four schemas are defined for the project:
-  - **stage_sch** → Raw data landing area.  
-  - **clean_sch** → Data after applying cleaning and transformations.  
-  - **consumption_sch** → Final schema for reporting, dashboards, and KPIs.  
-  - **common** → Shared objects such as tags and policies.  
+  - **stage_sch** → Raw data landing area.
+  - **clean_sch** → Data after applying cleaning and transformations.
+  - **consumption_sch** → Final schema for reporting, dashboards, and KPIs.
+  - **common** → Shared objects such as tags and policies.
 
 ## 3. File Format
-- A reusable **CSV file format** is created for structured ingestion of raw files (handles delimiters, headers, nulls, etc.).  
+
+- A reusable **CSV file format** is created for structured ingestion of raw files (handles delimiters, headers, nulls, etc.).
 
 ## 4. Internal Stage
-- An **internal stage** is set up in Snowflake for managing uploaded files before they are copied into tables.  
+
+- An **internal stage** is set up in Snowflake for managing uploaded files before they are copied into tables.
 
 ## 5. Data Governance with Tags & Masking
-- **Tag Objects**: Define classification labels like *PII*, *Price*, *Sensitive*, *Email*.  
+
+- **Tag Objects**: Define classification labels like _PII_, _Price_, _Sensitive_, _Email_.
 - **Masking Policies**: Protect sensitive data by masking values:
-  - PII masking  
-  - Email masking  
-  - Phone masking  
+  - PII masking
+  - Email masking
+  - Phone masking
 
 ## Why This Setup?
-- Provides a **structured multi-layer architecture** (Stage → Clean → Consumption).  
-- Ensures **security and compliance** with masking policies for sensitive data.  
+
+- Provides a **structured multi-layer architecture** (Stage → Clean → Consumption).
+- Ensures **security and compliance** with masking policies for sensitive data.
 - Keeps the environment **organized and production-ready**.
